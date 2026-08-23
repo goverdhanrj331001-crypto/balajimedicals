@@ -87,6 +87,9 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  // Server external packages (forces Node runtime to import natively without Webpack bundling ESM interop issues)
+  serverExternalPackages: ["firebase-admin", "jwks-rsa", "jose"],
+
   // Experimental optimizations
   experimental: {
     optimizePackageImports: ["@radix-ui/react-accordion", "sonner"],
