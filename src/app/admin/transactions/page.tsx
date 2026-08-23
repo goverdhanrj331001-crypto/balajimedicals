@@ -8,7 +8,7 @@ const columns: Column<Transaction>[] = [
   { key: 'orderId', label: 'Order', render: (t) => <span>{t.orderId}</span> },
   { key: 'customerName', label: 'Customer', render: (t) => <span>{t.customerName}</span> },
   { key: 'method', label: 'Payment Method', render: (t) => <span>{t.method}</span> },
-  { key: 'amount', label: 'Amount', render: (t) => <span className="font-bold">${Number(t.amount).toFixed(2)}</span> },
+  { key: 'amount', label: 'Amount', render: (t) => <span className="font-bold">₹{Number(t.amount).toLocaleString('en-IN')}</span> },
   { key: 'status', label: 'Status', render: (t) => <StatusPill value={t.status} /> },
 ];
 
@@ -17,7 +17,7 @@ const fields: FieldDef[] = [
   { name: 'orderId', label: 'Order ID', type: 'text', placeholder: 'MD-8492-X' },
   { name: 'customerName', label: 'Customer Name', type: 'text', placeholder: 'John Doe' },
   { name: 'method', label: 'Payment Method', type: 'text', placeholder: 'Visa •••• 4242' },
-  { name: 'amount', label: 'Amount ($)', type: 'number', placeholder: '142.50' },
+  { name: 'amount', label: 'Amount (₹)', type: 'number', placeholder: '142.50' },
   {
     name: 'status',
     label: 'Status',
@@ -50,7 +50,7 @@ const config: CrudPageConfig<Transaction> = {
     { label: 'Total Transactions', value: items.length, icon: 'receipt_long', tone: 'teal' },
     {
       label: 'Revenue',
-      value: `$${items.filter((i) => i.status === 'Completed').reduce((s, i) => s + Number(i.amount), 0).toFixed(0)}`,
+      value: `₹${items.filter((i) => i.status === 'Completed').reduce((s, i) => s + Number(i.amount), 0).toLocaleString('en-IN')}`,
       icon: 'payments',
       tone: 'blue',
     },

@@ -22,7 +22,7 @@ const columns: Column<User>[] = [
 const fields: FieldDef[] = [
   { name: 'name', label: 'Full Name', type: 'text', wide: true, placeholder: 'John Doe' },
   { name: 'email', label: 'Email', type: 'text', placeholder: 'john@example.com' },
-  { name: 'phone', label: 'Phone', type: 'text', placeholder: '+1 555-0100' },
+  { name: 'phone', label: 'Phone', type: 'text', placeholder: '+91 98765 43210' },
   {
     name: 'role',
     label: 'Role',

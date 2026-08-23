@@ -14,8 +14,8 @@ interface CartContextValue {
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
-const STORAGE_KEY = 'medidemo-cart';
-const EVENT_NAME = 'medidemo-cart-change';
+const STORAGE_KEY = 'bms_cart';
+const EVENT_NAME = 'bms_cart_change';
 
 // ─── External store for cart persistence ─────────────────────────
 // Uses useSyncExternalStore so React 19's strict rules are satisfied.

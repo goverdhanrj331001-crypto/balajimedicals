@@ -370,9 +370,10 @@ export const seedData = {
     { id: 'o3', text: 'Buy 2 Get 1 Free on Vitamins', code: 'B2G1', visibility: 'active' },
   ],
 
-  // ─── Home banners (controlled from admin) ─────────────────────
+  // ─── Home & Page banners (controlled from admin) ─────────────
   banners: [
     { id: 'banner-hero', slot: 'hero', title: 'Boost your immunity', subtitle: 'Health essentials for brighter days.', ctaText: 'CLICK TO SHOP', ctaHref: '/products', badge: 'Everyday wellness', imageUrl: '/banner-hero.png', visibility: 'active' },
+    { id: 'banner-products', slot: 'products', title: 'Healthcare & Wellness Products', subtitle: 'Explore genuine medicines, daily supplements, and healthcare essentials.', ctaText: 'EXPLORE NOW', ctaHref: '/products', badge: '100% Genuine Medicines', imageUrl: '', visibility: 'active' },
     { id: 'banner-prescription', slot: 'prescription', title: 'Order with prescription', subtitle: 'Upload a prescription and tell us what you need. We do the rest!', ctaText: 'Order Now', ctaHref: '/prescriptions', note: 'Flat 25% off on medicines*', visibility: 'active' },
     { id: 'banner-essentials', slot: 'essentials', title: 'Essentials', subtitle: 'Daily health', ctaText: 'SHOP NOW', ctaHref: '/products', note: 'UP TO 30% off', imageUrl: '/banner-essentials.png', visibility: 'active' },
     { id: 'banner-call', slot: 'call', title: 'Call to order medicines', subtitle: 'Need medicine without any hassle? call us now', ctaText: 'Call Now', ctaHref: '', visibility: 'active' },
@@ -380,26 +381,90 @@ export const seedData = {
 
   // ─── Lab packages & tests ─────────────────────────────────────
   labPackages: [
-    { id: 'full-body-checkup', name: 'Full Body Checkup', detail: 'Includes 85 tests: CBC, Thyroid, Lipid, Liver & more.', price: 149, icon: 'favorite', badge: '50% OFF', visibility: 'active', imageUrl: 'https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/2586d3fab709.png' },
-    { id: 'cardiac-profile', name: 'Cardiac Profile', detail: 'Complete heart health evaluation and lipid panel.', price: 89, icon: 'ecg_heart', visibility: 'active', imageUrl: 'https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/4d034f06dab5.webp' },
-    { id: 'womens-health', name: "Women's Health", detail: 'Essential screening including Iron, Thyroid, Vitamin D.', price: 120, icon: 'woman', visibility: 'active', imageUrl: 'https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/758ffc3de39a.jpg' },
-    { id: 'diabetic-screening', name: 'Diabetic Screening', detail: 'HbA1c, Fasting Sugar, and vital organ screening.', price: 45, icon: 'bloodtype', badge: 'Popular', visibility: 'active', imageUrl: 'https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/40f3c239fc55.jpg' },
+    {
+      id: 'comp-gold-full-body',
+      name: 'Comprehensive Gold Full Body Checkup',
+      detail: 'Includes 85 tests: CBC, Liver, Kidney, Lipid, Thyroid, Sugar, Vitamin D & Urine.',
+      price: 2499,
+      icon: 'health_and_safety',
+      badge: '50% off',
+      visibility: 'active',
+      collectionType: 'both',
+      imageUrl: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'good-health-silver',
+      name: 'Good Health Silver Package',
+      detail: 'Includes 55 tests: CBC, Blood Sugar, Cholesterol, Liver & Kidney Function.',
+      price: 749,
+      icon: 'medical_services',
+      badge: '50% off',
+      visibility: 'active',
+      collectionType: 'both',
+      imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'comp-silver-full-body',
+      name: 'Comprehensive Silver Full Body Checkup',
+      detail: 'Includes 72 tests: Complete Hemogram, Thyroid Profile, Lipid, Kidney & Liver.',
+      price: 1999,
+      icon: 'biotech',
+      badge: '50% off',
+      visibility: 'active',
+      collectionType: 'both',
+      imageUrl: 'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'comp-platinum-full-body',
+      name: 'Comprehensive Platinum Full Body Checkup',
+      detail: 'Includes 102 tests: CBC, Cardiac Risk, Vitamins, Hormones, Cancer screening & Organ Health.',
+      price: 3999,
+      icon: 'verified_user',
+      badge: '50% off',
+      visibility: 'active',
+      collectionType: 'both',
+      imageUrl: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'womens-wellness-pkg',
+      name: "Women's Wellness & Hormone Package",
+      detail: 'Includes 65 tests: Hemogram, Thyroid (T3/T4/TSH), Iron, Vitamin D3 & B12, Calcium.',
+      price: 1299,
+      icon: 'female',
+      badge: '50% off',
+      visibility: 'active',
+      collectionType: 'home',
+      imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'diabetic-screening',
+      name: 'Advanced Diabetes Care Package',
+      detail: 'Includes 8 tests: HbA1c (Glycated Hemoglobin), Fasting Blood Sugar, Post-Prandial & Lipid.',
+      price: 499,
+      icon: 'bloodtype',
+      badge: '50% off',
+      visibility: 'active',
+      collectionType: 'both',
+      imageUrl: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=600&auto=format&fit=crop&q=80',
+    },
   ],
   labTests: [
-    { id: 'lt1', name: 'Complete Blood Count (CBC)', detail: 'Results in 24 hrs', price: 15, visibility: 'active' },
-    { id: 'lt2', name: 'Thyroid Profile (T3, T4, TSH)', detail: 'Results in 24 hrs', price: 25, visibility: 'active' },
-    { id: 'lt3', name: 'Lipid Profile', detail: 'Fasting required', price: 20, visibility: 'active' },
-    { id: 'lt4', name: 'Vitamin D Test', detail: 'Results in 48 hrs', price: 35, visibility: 'active' },
-    { id: 'lt5', name: 'HbA1c Diabetes Test', detail: 'No fasting required', price: 28, visibility: 'active' },
+    { id: 'lt1', name: 'Complete Blood Count (CBC) with ESR', detail: '24 parameters · Free home collection · Results in 12 hrs', price: 299, collectionType: 'both', visibility: 'active' },
+    { id: 'lt2', name: 'Thyroid Profile Total (T3, T4, TSH)', detail: 'Ultrasensitive test · Fasting not mandatory · Results in 24 hrs', price: 349, collectionType: 'both', visibility: 'active' },
+    { id: 'lt3', name: 'Lipid Profile (Cholesterol & Triglycerides)', detail: '8 parameters · 10-12 hrs fasting required · Results in 24 hrs', price: 399, collectionType: 'both', visibility: 'active' },
+    { id: 'lt4', name: 'Vitamin D 25-Hydroxy Test', detail: 'Accurate ELISA method · Results in 24 hrs', price: 499, collectionType: 'both', visibility: 'active' },
+    { id: 'lt5', name: 'HbA1c Glycated Hemoglobin Test', detail: '3 months average glucose · No fasting required · Results in 12 hrs', price: 299, collectionType: 'both', visibility: 'active' },
+    { id: 'lt6', name: 'Liver Function Test (LFT)', detail: '12 vital parameters · 8 hrs fasting recommended · Results in 24 hrs', price: 449, collectionType: 'both', visibility: 'active' },
+    { id: 'lt7', name: 'Kidney Function Test (KFT / RFT)', detail: 'Urea, Creatinine, Uric Acid · Results in 24 hrs', price: 449, collectionType: 'both', visibility: 'active' },
   ],
 
   // ─── Demo orders (visible to admin) ───────────────────────────
   orders: [
     {
-      id: 'MD-8492-X',
+      id: 'BMS-8492-X',
       userId: 'u1',
       customerName: 'Health User',
-      customerEmail: 'user@medidemo.com',
+      customerEmail: 'user@balajimedical.com',
       items: [{ productId: 'demo-product-1', name: 'Multivitamin Complex', qty: 3, price: 24.99 }],
       total: 142.50,
       shippingAddress: '123 Wellness Avenue',
@@ -409,7 +474,7 @@ export const seedData = {
       createdAt: now - dayMs * 2,
     },
     {
-      id: 'MD-8498-K',
+      id: 'BMS-8498-K',
       userId: 'u2',
       customerName: 'Ava Morgan',
       customerEmail: 'ava@example.com',
@@ -422,7 +487,7 @@ export const seedData = {
       createdAt: now - dayMs,
     },
     {
-      id: 'MD-8501-Q',
+      id: 'BMS-8501-Q',
       userId: 'u3',
       customerName: 'Marcus Chen',
       customerEmail: 'marcus@example.com',
@@ -438,7 +503,7 @@ export const seedData = {
       createdAt: now - 36_00_000,
     },
     {
-      id: 'MD-8508-P',
+      id: 'BMS-8508-P',
       userId: 'u4',
       customerName: 'Elena Stone',
       customerEmail: 'elena@example.com',
@@ -454,7 +519,7 @@ export const seedData = {
       id: 'LB-1001',
       userId: 'u1',
       customerName: 'Health User',
-      customerEmail: 'user@medidemo.com',
+      customerEmail: 'user@balajimedical.com',
       items: [{ name: 'Full Body Checkup', qty: 1, price: 149 }],
       total: 149.00,
       shippingAddress: '123 Wellness Avenue',
@@ -482,49 +547,49 @@ export const seedData = {
 
   // ─── Demo users (customer accounts) ───────────────────────────
   users: [
-    { id: 'u1', name: 'Health User', email: 'user@medidemo.com', role: 'patient', status: 'active', phone: '+1 555-0100', lastLogin: now - 36_00_000 },
-    { id: 'u2', name: 'Ava Morgan', email: 'ava@example.com', role: 'patient', status: 'active', phone: '+1 555-0101', lastLogin: now - dayMs },
-    { id: 'u3', name: 'Marcus Chen', email: 'marcus@example.com', role: 'patient', status: 'active', phone: '+1 555-0102', lastLogin: now - dayMs * 2 },
-    { id: 'u4', name: 'Elena Stone', email: 'elena@example.com', role: 'patient', status: 'blocked', phone: '+1 555-0103', lastLogin: now - dayMs * 5 },
-    { id: 'u5', name: 'David Chen', email: 'david@example.com', role: 'lab_tech', status: 'active', phone: '+1 555-0104', lastLogin: now - dayMs * 3 },
-    { id: 'u6', name: 'Dr. Sarah Jenkins', email: 'sarah@example.com', role: 'doctor', status: 'active', phone: '+1 555-0105', lastLogin: now - 36_00_000 },
+    { id: 'u1', name: 'Health User', email: 'user@balajimedical.com', role: 'patient', status: 'active', phone: '+91 98765 43210', lastLogin: now - 36_00_000 },
+    { id: 'u2', name: 'Ava Morgan', email: 'ava@example.com', role: 'patient', status: 'active', phone: '+91 98765 43211', lastLogin: now - dayMs },
+    { id: 'u3', name: 'Marcus Chen', email: 'marcus@example.com', role: 'patient', status: 'active', phone: '+91 98765 43212', lastLogin: now - dayMs * 2 },
+    { id: 'u4', name: 'Elena Stone', email: 'elena@example.com', role: 'patient', status: 'blocked', phone: '+91 98765 43213', lastLogin: now - dayMs * 5 },
+    { id: 'u5', name: 'David Chen', email: 'david@example.com', role: 'lab_tech', status: 'active', phone: '+91 98765 43214', lastLogin: now - dayMs * 3 },
+    { id: 'u6', name: 'Dr. Sarah Jenkins', email: 'sarah@example.com', role: 'doctor', status: 'active', phone: '+91 98765 43215', lastLogin: now - 36_00_000 },
   ],
 
   // ─── Employees (staff managed by admin) ───────────────────────
   employees: [
-    { id: 'e1', name: 'Sarah Jenkins', email: 'sarah@example.com', department: 'Pharmacists', status: 'active', joinedAt: '2024-01-12', phone: '+1 555-0200' },
-    { id: 'e2', name: 'Michael Chang', email: 'michael@example.com', department: 'Lab Technicians', status: 'active', joinedAt: '2024-03-06', phone: '+1 555-0201' },
-    { id: 'e3', name: 'David Miller', email: 'dmiller@example.com', department: 'Delivery Partners', status: 'active', joinedAt: '2024-04-21', phone: '+1 555-0202' },
-    { id: 'e4', name: 'Priya Shah', email: 'priya@example.com', department: 'Admin', status: 'pending', joinedAt: '2024-06-14', phone: '+1 555-0203' },
+    { id: 'e1', name: 'Sarah Jenkins', email: 'sarah@example.com', department: 'Pharmacists', status: 'active', joinedAt: '2024-01-12', phone: '+91 98765 02001' },
+    { id: 'e2', name: 'Michael Chang', email: 'michael@example.com', department: 'Lab Technicians', status: 'active', joinedAt: '2024-03-06', phone: '+91 98765 02002' },
+    { id: 'e3', name: 'David Miller', email: 'dmiller@example.com', department: 'Delivery Partners', status: 'active', joinedAt: '2024-04-21', phone: '+91 98765 02003' },
+    { id: 'e4', name: 'Priya Shah', email: 'priya@example.com', department: 'Admin', status: 'pending', joinedAt: '2024-06-14', phone: '+91 98765 02004' },
   ],
 
   // ─── Support tickets ──────────────────────────────────────────
   supportTickets: [
     { id: 'SUP-2201', userId: 'u1', customerName: 'Health User', subject: 'Prescription verification', priority: 'High', status: 'Open', message: 'Need help verifying my uploaded prescription for Omeprazole.', createdAt: now - 7200_000 },
     { id: 'SUP-2202', userId: 'u2', customerName: 'Ava Morgan', subject: 'Delivery time change', priority: 'Medium', status: 'In Progress', message: 'Can my delivery be moved to tomorrow morning?', createdAt: now - dayMs },
-    { id: 'SUP-2203', userId: 'u3', customerName: 'Marcus Chen', subject: 'Refund request', priority: 'High', status: 'Open', message: 'Order #MD-8508-P was cancelled. Requesting refund.', createdAt: now - dayMs * 2 },
+    { id: 'SUP-2203', userId: 'u3', customerName: 'Marcus Chen', subject: 'Refund request', priority: 'High', status: 'Open', message: 'Order #BMS-8508-P was cancelled. Requesting refund.', createdAt: now - dayMs * 2 },
     { id: 'SUP-2204', userId: 'u4', customerName: 'Elena Stone', subject: 'Lab report question', priority: 'Low', status: 'Pending', message: 'Question about my CBC report results.', createdAt: now - dayMs * 3 },
   ],
 
   // ─── Transactions (derived from orders) ───────────────────────
   transactions: [
-    { id: 'TXN-78421', orderId: 'MD-8492-X', customerName: 'Health User', method: 'Visa •••• 4242', amount: 142.50, status: 'Completed', createdAt: now - dayMs * 2 },
-    { id: 'TXN-78422', orderId: 'MD-8498-K', customerName: 'Ava Morgan', method: 'UPI', amount: 149.00, status: 'Completed', createdAt: now - dayMs },
+    { id: 'TXN-78421', orderId: 'BMS-8492-X', customerName: 'Health User', method: 'Visa •••• 4242', amount: 142.50, status: 'Completed', createdAt: now - dayMs * 2 },
+    { id: 'TXN-78422', orderId: 'BMS-8498-K', customerName: 'Ava Morgan', method: 'UPI', amount: 149.00, status: 'Completed', createdAt: now - dayMs },
     { id: 'TXN-78423', orderId: 'LB-1003', customerName: 'Marcus Chen', method: 'Wallet', amount: 25.00, status: 'Pending', createdAt: now - 36_00_000 },
-    { id: 'TXN-78424', orderId: 'MD-8508-P', customerName: 'Elena Stone', method: 'Visa •••• 8801', amount: 64.50, status: 'Refunded', createdAt: now - dayMs * 3 },
+    { id: 'TXN-78424', orderId: 'BMS-8508-P', customerName: 'Elena Stone', method: 'Visa •••• 8801', amount: 64.50, status: 'Refunded', createdAt: now - dayMs * 3 },
   ],
 
   // ─── Site settings (admin controlled) ─────────────────────────
   settings: [
-    { id: 'site', siteName: 'Balaji Medical Store', tagline: 'Everyday wellness', supportPhone: '+1 555-1234', supportEmail: 'support@medidemo.com', currency: 'USD', currencySymbol: '$', freeShippingThreshold: 50, prescriptionDiscountPct: 25, heroBadgeText: 'Everyday wellness', heroTitle: 'Boost your immunity', heroSubtitle: 'Health essentials for brighter days.', maintenanceMode: false, labTestServiceStart: '09:00', labTestServiceEnd: '21:00', labTestMaxBookingsPerDay: 1, razorpayKeyId: '', razorpayKeySecret: '', razorpayEnabled: false, codEnabled: true, upiEnabled: false, cardEnabled: false },
+    { id: 'site', siteName: 'Balaji Medical Store', tagline: 'Everyday wellness', supportPhone: '+91 95210-00000', supportEmail: 'support@balajimedical.com', currency: 'INR', currencySymbol: '₹', freeShippingThreshold: 499, prescriptionDiscountPct: 25, heroBadgeText: 'Everyday wellness', heroTitle: 'Boost your immunity', heroSubtitle: 'Health essentials for brighter days.', maintenanceMode: false, labTestServiceStart: '09:00', labTestServiceEnd: '21:00', labTestMaxBookingsPerDay: 1, razorpayKeyId: '', razorpayKeySecret: '', razorpayEnabled: false, codEnabled: true, upiEnabled: false, cardEnabled: false },
   ],
 
   // ─── Auth users (for mock auth only) ──────────────────────────
   authUsers: [
-    // Default admin account (email/password: admin@medidemo.com / admin123)
+    // Default admin account (email/password: admin@balajimedical.com / admin123)
     {
       id: 'admin-1',
-      email: 'admin@medidemo.com',
+      email: 'admin@balajimedical.com',
       // NOTE: in mock mode we accept any password matching the demo value.
       password: 'admin123',
       name: 'Admin User',
@@ -533,7 +598,7 @@ export const seedData = {
     },
     {
       id: 'user-1',
-      email: 'user@medidemo.com',
+      email: 'user@balajimedical.com',
       password: 'user123',
       name: 'Health User',
       role: 'patient',

@@ -62,7 +62,7 @@ export default function LabPackagesPage() {
                   <div className="mt-4 flex items-end justify-between border-t border-[#f0eded] pt-3">
                     <div>
                       <p className="text-[11px] text-[#6e797b]">Starting from</p>
-                      <span className="text-[22px] font-extrabold">${Number(p.price).toFixed(2)}</span>
+                      <span className="text-[22px] font-extrabold">₹{Number(p.price).toLocaleString('en-IN')}</span>
                     </div>
                     <Link
                       href={`/lab-tests/schedule?pkg=${p.id}`}

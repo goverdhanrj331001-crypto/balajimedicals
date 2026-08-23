@@ -7,7 +7,7 @@ const securityHeaders = [
   },
   {
     key: "X-Frame-Options",
-    value: "ALLOWALL",
+    value: "SAMEORIGIN",
   },
   {
     key: "X-Content-Type-Options",
@@ -39,7 +39,6 @@ const securityHeaders = [
       "img-src 'self' data: blob: https: http:",
       "connect-src 'self' https://identitytoolkit.googleapis.com https://firestore.googleapis.com https://securetoken.googleapis.com",
       "frame-src https://api.razorpay.com",
-      "frame-ancestors https://*.space-z.ai https://space-z.ai",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -48,6 +47,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Disable dev indicators overlay
+  devIndicators: false,
+
   // Compress responses
   compress: true,
 
@@ -93,14 +95,11 @@ const nextConfig: NextConfig = {
 
   // Experimental optimizations
   experimental: {
-    optimizePackageImports: ["lucide-react", "framer-motion", "@radix-ui/react-icons"],
+    optimizePackageImports: ["@radix-ui/react-accordion", "sonner"],
   },
 
   // Powered by header removal
   poweredByHeader: false,
-
-  // Allow preview domains for dev server
-  allowedDevOrigins: ['https://*.space-z.ai', 'https://space-z.ai'],
 };
 
 export default nextConfig;

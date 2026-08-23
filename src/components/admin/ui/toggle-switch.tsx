@@ -17,10 +17,6 @@ export function ToggleSwitch({
   disabled = false,
   size = 'md',
 }: ToggleSwitchProps) {
-  const dimensions = size === 'sm'
-    ? { track: 'h-5 w-9', knob: 'h-3 w-3', translate: 'left-5', top: 'top-1' }
-    : { track: 'h-6 w-11', knob: 'h-4 w-4', translate: 'left-6', top: 'top-1' };
-
   return (
     <div className="flex items-center justify-between gap-3">
       {(label || description) && (
@@ -33,20 +29,44 @@ export function ToggleSwitch({
           )}
         </div>
       )}
+
+      {/* Toggle track */}
       <button
         type="button"
         role="switch"
         aria-checked={checked}
         disabled={disabled}
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex shrink-0 ${dimensions.track} items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#006872]/40 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
-          checked ? 'bg-[#006872]' : 'bg-[#bdc9ca]'
-        }`}
+        style={{
+          position: 'relative',
+          display: 'inline-flex',
+          width: size === 'sm' ? '36px' : '48px',
+          height: size === 'sm' ? '20px' : '26px',
+          borderRadius: '9999px',
+          flexShrink: 0,
+          transition: 'background-color 0.2s',
+          backgroundColor: checked ? '#006872' : '#bdc9ca',
+          border: 'none',
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          opacity: disabled ? 0.5 : 1,
+          outline: 'none',
+        }}
       >
+        {/* Knob */}
         <span
-          className={`inline-block ${dimensions.knob} transform rounded-full bg-white shadow-md transition-transform duration-200 ${
-            checked ? dimensions.translate : 'left-1'
-          } ${dimensions.top}`}
+          style={{
+            position: 'absolute',
+            top: '3px',
+            left: checked
+              ? size === 'sm' ? '18px' : '24px'
+              : '3px',
+            width: size === 'sm' ? '14px' : '20px',
+            height: size === 'sm' ? '14px' : '20px',
+            borderRadius: '9999px',
+            backgroundColor: 'white',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+            transition: 'left 0.2s ease',
+          }}
         />
       </button>
     </div>

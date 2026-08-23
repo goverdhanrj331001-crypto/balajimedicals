@@ -111,8 +111,8 @@ export default function PrescriptionsPage() {
         <div className="mt-5 rounded-lg bg-[#fff3e0] p-4 text-[12px] text-[#643f00]">
           <p className="font-bold">Need help?</p>
           <p className="mt-1">
-            Call us at <a href="tel:+15551234" className="font-bold underline">+1 555-1234</a> or email{' '}
-            <a href="mailto:support@medidemo.com" className="font-bold underline">support@medidemo.com</a> for assistance with prescriptions.
+            Call us at <a href="tel:+919521000000" className="font-bold underline">+91 95210-00000</a> or email{' '}
+            <a href="mailto:support@balajimedical.com" className="font-bold underline">support@balajimedical.com</a> for assistance with prescriptions.
           </p>
         </div>
       </main>

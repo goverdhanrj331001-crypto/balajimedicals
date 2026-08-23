@@ -54,9 +54,9 @@ export default function AdminDashboardPage() {
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard label="Total Revenue" value={`$${data.stats.totalRevenue.toLocaleString()}`} delta="+12.5% from last month" icon="payments" />
-            <StatCard label="Total Orders" value={data.stats.totalOrders} delta="+8.2% from last month" icon="shopping_bag" tone="blue" />
-            <StatCard label="Customers" value={data.stats.newCustomers} delta="+15.4% from last month" icon="group_add" tone="gold" />
+            <StatCard label="Total Revenue" value={`₹${data.stats.totalRevenue.toLocaleString('en-IN')}`} delta="From all completed orders" icon="payments" />
+            <StatCard label="Total Orders" value={data.stats.totalOrders} delta="Medicine + Lab orders" icon="shopping_bag" tone="blue" />
+            <StatCard label="Customers" value={data.stats.newCustomers} delta="Registered users" icon="group_add" tone="gold" />
             <StatCard label="Pending Actions" value={data.stats.pendingActions} delta="Needs your attention" icon="pending_actions" tone="red" />
           </div>
 
@@ -94,7 +94,12 @@ export default function AdminDashboardPage() {
             >
               <AdminTable
                 headers={['Order ID', 'Customer', 'Total', 'Status']}
-                rows={data.recentOrders.map((_) => ['', '', '', ''])}
+                rows={data.recentOrders.map((o) => [
+                  o.id,
+                  o.customerName,
+                  `₹${Number(o.total).toLocaleString('en-IN')}`,
+                  o.status,
+                ])}
                 showAction={false}
                 renderRow={(_row, ri) => {
                   const o = data.recentOrders[ri];
@@ -102,7 +107,7 @@ export default function AdminDashboardPage() {
                     <>
                       <td className="px-3 py-3 text-[12px] font-bold text-[#006872]">{o.id}</td>
                       <td className="px-3 py-3 text-[12px]">{o.customerName}</td>
-                      <td className="px-3 py-3 text-[12px] font-semibold">${Number(o.total).toFixed(2)}</td>
+                      <td className="px-3 py-3 text-[12px] font-semibold">₹{Number(o.total).toLocaleString('en-IN')}</td>
                       <td className="px-3 py-3"><StatusPill value={o.status} /></td>
                     </>
                   );

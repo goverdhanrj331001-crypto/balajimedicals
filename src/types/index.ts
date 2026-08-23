@@ -209,6 +209,7 @@ export interface LabPackage {
   badge?: string;
   visibility: Visibility;
   imageUrl?: string;
+  collectionType?: 'home' | 'lab' | 'both';
 }
 
 export interface LabTest {
@@ -217,6 +218,8 @@ export interface LabTest {
   detail: string;
   price: number;
   visibility: Visibility;
+  imageUrl?: string;
+  collectionType?: 'home' | 'lab' | 'both';
 }
 
 export interface OrderItem {
@@ -236,6 +239,13 @@ export interface Order {
   shippingAddress?: string;
   status: OrderStatus;
   type: OrderType;
+  collectionMode?: 'home' | 'lab';
+  patientName?: string;
+  patientPhone?: string;
+  patientAge?: number | string;
+  patientGender?: string;
+  reportUrl?: string;
+  reportUploadedAt?: number;
   prescriptionVerified?: boolean;
   prescriptionUrl?: string;
   scheduledAt?: number;
@@ -252,8 +262,11 @@ export interface User {
   role: UserRole;
   status: 'active' | 'blocked' | 'pending';
   phone?: string;
+  age?: number | string;
+  gender?: string;
   lastLogin?: number;
   address?: string;
+  profileImage?: string;
   createdAt?: number;
 }
 
@@ -336,6 +349,11 @@ export interface SessionUser {
   name: string;
   role: UserRole | AdminRole;
   status?: string;
+  phone?: string;
+  age?: number | string;
+  gender?: string;
+  address?: string;
+  profileImage?: string;
 }
 
 // ─── Product Review ─────────────────────────────────────────────

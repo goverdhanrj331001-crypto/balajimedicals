@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { DesktopHeader } from '@/components/layout/desktop-header';
@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, cartTotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -30,12 +30,15 @@ export default function CheckoutPage() {
     upiEnabled: false,
     cardEnabled: false,
   });
-  const [prescriptionFile, setPrescriptionFile] = useState<File | null>(null);
-  const [prescriptionUrl, setPrescriptionUrl] = useState('');
-  const [uploadingRx, setUploadingRx] = useState(false);
   const [placing, setPlacing] = useState(false);
 
-  const fileRef = useRef<HTMLInputElement>(null);
+  // Authentication gate: user must be logged in to access checkout
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast.info('Please log in to complete your medicine order');
+      router.replace('/login?redirect=/checkout');
+    }
+  }, [user, authLoading, router]);
 
   // Load payment settings
   useEffect(() => {
@@ -58,7 +61,7 @@ export default function CheckoutPage() {
           else if (ps.cardEnabled) setPaymentMethod('Card');
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Pre-fill if user is logged in.
@@ -76,27 +79,20 @@ export default function CheckoutPage() {
     }
   }, [cart, router]);
 
-  const needsPrescription = cart.some((i) => i.prescriptionRequired);
+  if (authLoading || !user) {
+    return (
+      <div className="app-root min-h-screen">
+        <DesktopHeader />
+        <div className="flex h-96 items-center justify-center">
+          <span className="h-8 w-8 animate-spin rounded-full border-2 border-[#006872]/30 border-t-[#006872]" />
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   const shipping = cartTotal >= 50 ? 0 : 5;
   const grandTotal = cartTotal + shipping;
-
-  const onUploadRx = async (file: File) => {
-    setUploadingRx(true);
-    try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('/api/public/upload-prescription', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'Upload failed');
-      setPrescriptionUrl(data.url);
-      toast.success('Prescription uploaded');
-    } catch (e: any) {
-      toast.error(e.message ?? 'Upload failed');
-    } finally {
-      setUploadingRx(false);
-    }
-  };
 
   const onPlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,10 +101,7 @@ export default function CheckoutPage() {
       router.push('/login?redirect=/checkout');
       return;
     }
-    if (needsPrescription && !prescriptionUrl) {
-      toast.error('Please upload a prescription for the prescription-required items');
-      return;
-    }
+
     if (!name || !email || !address || !city || !postal) {
       toast.error('Please fill in all required fields');
       return;
@@ -130,7 +123,6 @@ export default function CheckoutPage() {
           shippingAddress: `${address}, ${city}, ${postal}`,
           type: 'medicine',
           paymentMethod,
-          prescriptionUrl,
         }),
       });
       const data = await res.json();
@@ -265,7 +257,7 @@ export default function CheckoutPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
-                    placeholder="+1 555-0100"
+                    placeholder="+91 98765 43210"
                     className="w-full rounded-lg border border-[#bdc9ca] bg-white px-3 py-2.5 text-[12px] outline-none focus:border-[#006872]"
                   />
                 </label>
@@ -310,45 +302,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Prescription (if needed) */}
-            {needsPrescription && (
-              <div className="soft-card rounded-xl p-4">
-                <h2 className="text-[14px] font-bold">Prescription Upload *</h2>
-                <p className="mt-1 text-[11px] text-[#6e797b]">
-                  Your cart contains prescription-required items. Please upload a valid prescription.
-                </p>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*,application/pdf"
-                  className="hidden"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) onUploadRx(f);
-                  }}
-                />
-                <div className="mt-3 flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current?.click()}
-                    disabled={uploadingRx}
-                    className="rounded-lg border border-[#bdc9ca] bg-white px-3 py-2 text-[11px] font-bold text-[#3e494a] hover:bg-[#f5f3f3] disabled:opacity-60"
-                  >
-                    {uploadingRx ? 'Uploading…' : 'Upload Prescription'}
-                  </button>
-                  {prescriptionUrl && (
-                    <a
-                      href={prescriptionUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-[11px] font-bold text-[#006872]"
-                    >
-                      <Icon name="check_circle" className="text-[16px]" /> View uploaded file
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
+
 
             {/* Payment */}
             <div className="soft-card rounded-xl p-4">
@@ -359,11 +313,10 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('COD')}
-                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${
-                      paymentMethod === 'COD'
-                        ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
-                        : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
-                    }`}
+                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${paymentMethod === 'COD'
+                      ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
+                      : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
+                      }`}
                   >
                     <Icon name="payments" className="text-[18px]" />
                     Cash on Delivery
@@ -374,11 +327,10 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('Razorpay')}
-                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${
-                      paymentMethod === 'Razorpay'
-                        ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
-                        : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
-                    }`}
+                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${paymentMethod === 'Razorpay'
+                      ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
+                      : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
+                      }`}
                   >
                     <Icon name="credit_card" className="text-[18px]" />
                     Online Payment (Razorpay)
@@ -389,11 +341,10 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('UPI')}
-                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${
-                      paymentMethod === 'UPI'
-                        ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
-                        : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
-                    }`}
+                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${paymentMethod === 'UPI'
+                      ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
+                      : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
+                      }`}
                   >
                     <Icon name="account_balance_wallet" className="text-[18px]" />
                     UPI / Wallet
@@ -404,11 +355,10 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('Card')}
-                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${
-                      paymentMethod === 'Card'
-                        ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
-                        : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
-                    }`}
+                    className={`flex items-center gap-2 rounded-lg border p-3 text-left text-[12px] font-bold transition ${paymentMethod === 'Card'
+                      ? 'border-[#006872] bg-[#d9eeee] text-[#006872]'
+                      : 'border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
+                      }`}
                   >
                     <Icon name="credit_card" className="text-[18px]" />
                     Credit / Debit Card
@@ -417,10 +367,10 @@ export default function CheckoutPage() {
               </div>
               <p className="mt-2 text-[10px] text-[#6e797b]">
                 {paymentMethod === 'COD'
-                  ? '💰 Pay when you receive your order. Order will be pending until delivery.'
+                  ? ' Pay when you receive your order. Order will be pending until delivery.'
                   : paymentMethod === 'Razorpay'
-                  ? '💳 Pay securely online. Order will be confirmed instantly after payment.'
-                  : 'Select a payment method to proceed.'}
+                    ? ' Pay securely online. Order will be confirmed instantly after payment.'
+                    : 'Select a payment method to proceed.'}
               </p>
             </div>
           </div>
@@ -433,26 +383,26 @@ export default function CheckoutPage() {
                 {cart.map((item) => (
                   <div key={item.id} className="flex justify-between text-[12px]">
                     <span className="text-[#3e494a]">{item.shortName} × {item.quantity}</span>
-                    <span className="font-bold">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-bold">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                   </div>
                 ))}
               </div>
               <div className="mt-3 space-y-1 border-t border-[#f0eded] pt-3 text-[12px]">
                 <div className="flex justify-between">
                   <span className="text-[#6e797b]">Subtotal</span>
-                  <span className="font-bold">${cartTotal.toFixed(2)}</span>
+                  <span className="font-bold">₹{cartTotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#6e797b]">Shipping</span>
                   {shipping === 0 ? (
                     <span className="font-bold text-[#006872]">FREE</span>
                   ) : (
-                    <span className="font-bold">${shipping.toFixed(2)}</span>
+                    <span className="font-bold">₹{shipping.toLocaleString('en-IN')}</span>
                   )}
                 </div>
                 <div className="flex justify-between border-t border-[#f0eded] pt-2">
                   <span className="font-bold">Total</span>
-                  <span className="text-[18px] font-extrabold">${grandTotal.toFixed(2)}</span>
+                  <span className="text-[18px] font-extrabold">₹{grandTotal.toLocaleString('en-IN')}</span>
                 </div>
               </div>
               <button
@@ -460,7 +410,7 @@ export default function CheckoutPage() {
                 disabled={placing}
                 className="mt-4 w-full rounded-lg bg-[#006872] py-3 text-[13px] font-bold text-white hover:bg-[#00535b] disabled:opacity-60"
               >
-                {placing ? 'Placing Order…' : `Place Order · $${grandTotal.toFixed(2)}`}
+                {placing ? 'Placing Order…' : `Place Order · ₹${grandTotal.toLocaleString('en-IN')}`}
               </button>
             </div>
           </div>

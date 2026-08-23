@@ -13,6 +13,7 @@ import { cookies } from 'next/headers';
 import { isAdminSdkConfigured, getAdminAuth } from '@/lib/firebase/admin';
 import { isFirebaseConfigured } from '@/lib/firebase/config';
 import { mem } from '@/lib/store/mem-store';
+import { repo } from '@/lib/store/repo';
 import type { SessionUser, UserRole } from '@/types';
 
 interface DecodedSession {
@@ -33,22 +34,9 @@ function decodeSessionToken(token: string): DecodedSession | null {
 
 export async function getSessionUser(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get('medidemo-session')?.value;
+  const token = cookieStore.get('bms_session')?.value;
 
   if (!token) {
-    // Default admin bypass only in mock mode (no Firebase configured).
-    if (!isFirebaseConfigured) {
-      const admin = (await mem.authUsers.list()).find((u: any) => u.role === 'admin');
-      if (admin) {
-        return {
-          uid: admin.id,
-          email: admin.email,
-          name: admin.name,
-          role: 'admin' as UserRole,
-          status: admin.status,
-        };
-      }
-    }
     return null;
   }
 
@@ -61,11 +49,32 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     if (!adminAuth) return null;
     try {
       const userRecord = await (adminAuth as any).getUser(decoded.uid);
-      const role = (userRecord.customClaims?.role ?? 'patient') as UserRole;
-      const status = userRecord.customClaims?.status ?? 'active';
-      const name = userRecord.displayName ?? decoded.email ?? 'User';
+      let role = userRecord.customClaims?.role as UserRole | undefined;
+      let status = userRecord.customClaims?.status as string | undefined;
+
+      const dbUser = await repo.get('users', decoded.uid).catch(() => null);
+      if (!role && dbUser?.role) {
+        role = dbUser.role as UserRole;
+        status = dbUser.status || 'active';
+        await (adminAuth as any).setCustomUserClaims(decoded.uid, { role, status });
+      }
+
+      if (!role) role = 'patient';
+      if (!status) status = 'active';
+      const name = dbUser?.name ?? userRecord.displayName ?? decoded.email ?? 'User';
       const email = userRecord.email ?? decoded.email ?? '';
-      return { uid: decoded.uid, email, name, role, status };
+      return {
+        uid: decoded.uid,
+        email,
+        name,
+        role,
+        status,
+        phone: dbUser?.phone,
+        age: dbUser?.age,
+        gender: dbUser?.gender,
+        address: dbUser?.address,
+        profileImage: dbUser?.profileImage,
+      };
     } catch (e) {
       console.error('[session] user lookup failed:', (e as Error).message);
       return null;
@@ -75,12 +84,18 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   // Mock mode: look up in mem store.
   const found = (await mem.authUsers.list()).find((u: any) => u.id === decoded.uid);
   if (!found) return null;
+  const dbUser = (await mem.users.list()).find((u: any) => u.id === decoded.uid || u.email === found.email);
   return {
     uid: found.id,
     email: found.email,
-    name: found.name,
+    name: dbUser?.name ?? found.name,
     role: found.role as UserRole,
     status: found.status,
+    phone: dbUser?.phone ?? found.phone,
+    age: dbUser?.age ?? found.age,
+    gender: dbUser?.gender ?? found.gender,
+    address: dbUser?.address ?? found.address,
+    profileImage: dbUser?.profileImage ?? found.profileImage,
   };
 }
 

@@ -18,6 +18,8 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('Male');
   const [address, setAddress] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileImage, setProfileImage] = useState('');
@@ -66,6 +68,11 @@ export default function ProfilePage() {
   useEffect(() => {
     if (user) {
       setName(user.name ?? '');
+      setPhone(user.phone ?? '');
+      setAge(user.age ? String(user.age) : '');
+      setGender(user.gender ?? 'Male');
+      setAddress(user.address ?? '');
+      if (user.profileImage) setProfileImage(user.profileImage);
     }
   }, [user]);
 
@@ -122,7 +129,7 @@ export default function ProfilePage() {
       const res = await fetch(`/api/admin/users?id=${user.uid}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, address }),
+        body: JSON.stringify({ name, phone, age, gender, address }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Update failed');
@@ -217,16 +224,42 @@ export default function ProfilePage() {
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+1 555-0100"
+                      placeholder="+91 98765 43210"
                       className="w-full rounded-lg border border-[#bdc9ca] bg-white px-3 py-2.5 text-[12px] outline-none focus:border-[#006872]"
                     />
                   </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="block">
+                      <span className="mb-1 block text-[11px] font-bold text-[#3e494a]">Age</span>
+                      <input
+                        type="number"
+                        value={age}
+                        onChange={(e) => setAge(e.target.value)}
+                        placeholder="e.g. 35"
+                        min="1"
+                        max="120"
+                        className="w-full rounded-lg border border-[#bdc9ca] bg-white px-3 py-2.5 text-[12px] outline-none focus:border-[#006872]"
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="mb-1 block text-[11px] font-bold text-[#3e494a]">Gender</span>
+                      <select
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                        className="w-full rounded-lg border border-[#bdc9ca] bg-white px-3 py-2.5 text-[12px] outline-none focus:border-[#006872]"
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </label>
+                  </div>
                   <label className="block">
-                    <span className="mb-1 block text-[11px] font-bold text-[#3e494a]">Address</span>
+                    <span className="mb-1 block text-[11px] font-bold text-[#3e494a]">Delivery / Home Address</span>
                     <textarea
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      placeholder="Your delivery address"
+                      placeholder="Your full delivery & home address"
                       className="min-h-16 w-full resize-y rounded-lg border border-[#bdc9ca] bg-white px-3 py-2.5 text-[12px] outline-none focus:border-[#006872]"
                     />
                   </label>
@@ -305,7 +338,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-[13px] font-bold">${Number(o.total).toFixed(2)}</p>
+                    <p className="text-[13px] font-bold">₹{Number(o.total).toLocaleString('en-IN')}</p>
                     <span
                       className={`text-[10px] font-bold ${
                         o.status === 'Delivered' || o.status === 'Completed'
@@ -337,7 +370,7 @@ export default function ProfilePage() {
               <Link href="/lab-tests" className="mt-2 inline-block text-[12px] font-bold text-[#006872]">Book a lab test →</Link>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {labOrders.slice(0, 5).map((o) => {
                 const testName = o.items?.[0]?.name ?? 'Lab Test';
                 const isCompleted = o.status === 'Completed' || o.status === 'Delivered';
@@ -345,36 +378,58 @@ export default function ProfilePage() {
                 return (
                   <div
                     key={o.id}
-                    className="soft-card flex items-center justify-between rounded-xl p-3"
+                    className="soft-card flex flex-col gap-2 rounded-2xl p-3.5 sm:flex-row sm:items-center sm:justify-between border border-[#e2e8f0]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                        isCompleted ? 'bg-[#d9eeee]' : isPending ? 'bg-[#ffddb5]' : 'bg-[#ffdad7]'
+                      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                        isCompleted ? 'bg-[#d9eeee] text-[#006872]' : isPending ? 'bg-[#ffddb5] text-[#835400]' : 'bg-[#ffdad7] text-[#910816]'
                       }`}>
-                        <Icon name="science" className={`text-[20px] ${
-                          isCompleted ? 'text-[#006872]' : isPending ? 'text-[#835400]' : 'text-[#910816]'
-                        }`} />
+                        <Icon name="science" className="text-[22px]" />
                       </div>
                       <div>
-                        <p className="text-[13px] font-bold">{testName}</p>
-                        <p className="text-[11px] text-[#6e797b]">
+                        <div className="flex items-center gap-2">
+                          <p className="text-[13.5px] font-bold text-[#0f172a]">{testName}</p>
+                          {o.collectionMode && (
+                            <span className={`rounded px-1.5 py-0.2 text-[9.5px] font-bold ${
+                              o.collectionMode === 'home' ? 'bg-[#dcfce7] text-[#15803d]' : 'bg-[#e0e7ff] text-[#4338ca]'
+                            }`}>
+                              {o.collectionMode === 'home' ? '🏠 Home' : '🏥 Lab'}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11.5px] text-[#64748b]">
                           #{o.id} · {o.scheduledAt ? new Date(o.scheduledAt).toLocaleDateString() : new Date(o.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[13px] font-bold">${Number(o.total).toFixed(2)}</p>
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                          isCompleted
-                            ? 'bg-[#d9eeee] text-[#006872]'
-                            : isPending
-                            ? 'bg-[#ffddb5] text-[#835400]'
-                            : 'bg-[#ffdad7] text-[#910816]'
-                        }`}
-                      >
-                        {isCompleted ? 'Report Ready' : o.status}
-                      </span>
+
+                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#f1f5f9]">
+                      <div className="text-left sm:text-right">
+                        <p className="text-[13px] font-bold text-[#0f172a]">₹{Number(o.total).toLocaleString('en-IN')}</p>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            isCompleted
+                              ? 'bg-[#dcfce7] text-[#15803d]'
+                              : isPending
+                              ? 'bg-[#fef3c7] text-[#b45309]'
+                              : 'bg-[#fee2e2] text-[#b91c1c]'
+                          }`}
+                        >
+                          {isCompleted ? 'Report Ready' : o.status}
+                        </span>
+                      </div>
+
+                      {o.reportUrl && (
+                        <a
+                          href={o.reportUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 rounded-xl bg-[#006872] px-3 py-1.5 text-[11.5px] font-bold text-white shadow-2xs hover:bg-[#00535b]"
+                        >
+                          <Icon name="description" className="text-[14px]" />
+                          <span>View Report</span>
+                        </a>
+                      )}
                     </div>
                   </div>
                 );

@@ -17,10 +17,11 @@ interface ProductArtProps {
 export function ProductArt({ product, className = '', lazy = true }: ProductArtProps) {
   const img = product.thumbnail || product.imageUrl;
   if (img) {
+    const cleanImg = img.replace(/&#x2F;/g, '/');
     return (
-      <div className={cn('flex h-full w-full items-center justify-center bg-white p-2', className)}>
+      <div className={cn('flex h-full w-full items-center justify-center bg-transparent', className)}>
         <img
-          src={img}
+          src={cleanImg}
           alt={product.name ?? 'Product image'}
           loading={lazy ? 'lazy' : 'eager'}
           decoding="async"
@@ -31,7 +32,7 @@ export function ProductArt({ product, className = '', lazy = true }: ProductArtP
   }
   return (
     <div
-      className={cn('flex h-full w-full items-center justify-center', className)}
+      className={cn('flex h-full w-full items-center justify-center rounded-xl', className)}
       style={{ backgroundColor: product.tint || '#f5f3f3' }}
     >
       <Icon name={product.icon || 'medication'} className="text-[42px] text-[#006872]" />

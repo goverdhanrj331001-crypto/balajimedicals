@@ -101,13 +101,31 @@ export async function loginWithEmail(email: string, password: string): Promise<L
     // Step 1: Verify password via Firebase Auth REST API
     const uid = await verifyPasswordWithFirebase(email, password);
 
-    // Step 2: Get user info + role via Admin SDK
+    // Step 2: Get user info + role via Admin SDK & Firestore
     if (isAdminSdkConfigured) {
       const adminAuth = await getAdminAuth();
       if (!adminAuth) throw new Error('Auth not initialized');
       const userRecord = await (adminAuth as any).getUser(uid);
-      const role = (userRecord.customClaims?.role ?? 'patient') as UserRole;
-      const status = userRecord.customClaims?.status ?? 'active';
+      let role = userRecord.customClaims?.role as UserRole | undefined;
+      let status = userRecord.customClaims?.status as string | undefined;
+
+      // Fallback: Check Firestore /users collection if custom claims are not set yet
+      if (!role) {
+        try {
+          const dbUser = await repo.get('users', uid);
+          if (dbUser?.role) {
+            role = dbUser.role as UserRole;
+            status = dbUser.status || 'active';
+            // Sync custom claims to Firebase Auth for instant future checks
+            await (adminAuth as any).setCustomUserClaims(uid, { role, status });
+          }
+        } catch (err) {
+          console.error('[loginWithEmail] Firestore role fallback error:', err);
+        }
+      }
+
+      if (!role) role = 'patient';
+      if (!status) status = 'active';
       const name = userRecord.displayName ?? email;
 
       // Step 3: Mint a session token (base64-encoded JSON).

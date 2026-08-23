@@ -17,11 +17,11 @@ export function AdminLayout({ title, children }: AdminLayoutProps) {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
 
-  // Auth gate: kick non-admins to /admin/login
+  // Auth gate: kick non-admins to /admin/churu95210
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      router.replace('/admin/login');
+      router.replace('/admin/churu95210');
       return;
     }
     if (user.role !== 'admin' && user.role !== 'manager') {
@@ -31,7 +31,7 @@ export function AdminLayout({ title, children }: AdminLayoutProps) {
 
   const onLogout = async () => {
     await logout();
-    router.replace('/admin/login');
+    router.replace('/admin/churu95210');
   };
 
   // While loading or no user → show loading screen (content NOT rendered)

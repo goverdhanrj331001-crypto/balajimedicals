@@ -2,9 +2,9 @@
 // Run: bun run scripts/seed-firestore.ts
 //
 // This script:
-//   1. Creates the admin user in Firebase Auth (admin@medidemo.com / admin123)
+//   1. Creates the admin user in Firebase Auth (admin@balajimedical.com / admin123)
 //   2. Sets custom claims { role: 'admin', status: 'active' } on that user
-//   3. Creates a demo customer user (user@medidemo.com / user123)
+//   3. Creates a demo customer user (user@balajimedical.com / user123)
 //   4. Seeds all 14 Firestore collections with demo data
 //
 // Re-runnable: idempotent — uses doc IDs from seed.ts so re-runs upsert.

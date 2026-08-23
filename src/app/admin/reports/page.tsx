@@ -50,9 +50,9 @@ export default function AdminReportsPage() {
         <>
           {/* Top KPIs */}
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard label="Total Revenue" value={`$${data.stats.totalRevenue.toLocaleString()}`} icon="payments" />
+            <StatCard label="Total Revenue" value={`₹${data.stats.totalRevenue.toLocaleString('en-IN')}`} icon="payments" />
             <StatCard label="Total Orders" value={data.stats.totalOrders} icon="receipt_long" tone="blue" />
-            <StatCard label="Avg. Order Value" value={`$${data.stats.totalOrders ? Math.round(data.stats.totalRevenue / data.stats.totalOrders) : 0}`} icon="trending_up" tone="gold" />
+            <StatCard label="Avg. Order Value" value={`₹${data.stats.totalOrders ? Math.round(data.stats.totalRevenue / data.stats.totalOrders).toLocaleString('en-IN') : 0}`} icon="trending_up" tone="gold" />
             <StatCard label="Open Tickets" value={data.stats.openTickets} icon="support_agent" tone="red" />
           </div>
 
@@ -137,11 +137,11 @@ function BarChart({ trend }: { trend: { day: string; revenue: number; orders: nu
               <div
                 className="w-full rounded-t-md bg-gradient-to-t from-[#006872] to-[#00838f] transition-all"
                 style={{ height: `${Math.max(2, h)}%` }}
-                title={`$${t.revenue} · ${t.orders} orders`}
+                title={`₹${t.revenue.toLocaleString('en-IN')} · ${t.orders} orders`}
               />
             </div>
             <div className="text-center">
-              <p className="text-[10px] font-bold text-[#1b1c1c]">${t.revenue}</p>
+              <p className="text-[10px] font-bold text-[#1b1c1c]">₹{t.revenue.toLocaleString('en-IN')}</p>
               <p className="text-[10px] text-[#6e797b]">{t.day}</p>
             </div>
           </div>

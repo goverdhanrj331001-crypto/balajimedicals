@@ -25,7 +25,7 @@ export const r2Config = {
   accessKeyId: process.env.R2_ACCESS_KEY_ID ?? '',
   secretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? '',
   bucket: process.env.R2_BUCKET ?? '',
-  publicUrl: process.env.R2_PUBLIC_URL ?? '', // e.g. https://cdn.medidemo.com
+  publicUrl: process.env.R2_PUBLIC_URL ?? '', // e.g. https://cdn.balajimedical.com
 };
 
 export const isR2Configured = Boolean(

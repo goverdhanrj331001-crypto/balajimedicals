@@ -18,8 +18,9 @@ export function ImageUpload({ value, onChange, label = 'Image', endpoint = '/api
   const [dragOver, setDragOver] = useState(false);
 
   const handleFile = async (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file');
+    const isImg = file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif|svg|avif|jfif|bmp)$/i.test(file.name);
+    if (!isImg) {
+      setError('Please select a valid image file');
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
@@ -42,14 +43,16 @@ export function ImageUpload({ value, onChange, label = 'Image', endpoint = '/api
     }
   };
 
+  const cleanUrl = value ? value.replace(/&#x2F;/g, '/') : '';
+
   return (
     <div>
       <span className="mb-1.5 block text-[11px] font-bold text-[#3e494a]">{label}</span>
       <div className="flex items-start gap-3">
         {/* Preview */}
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-[#bdc9ca] bg-[#f5f3f3]">
-          {value ? (
-            <img src={value} alt="Preview" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+          {cleanUrl ? (
+            <img src={cleanUrl} alt="Preview" loading="lazy" decoding="async" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <Icon name="image" className="text-[28px] text-[#bdc9ca]" />

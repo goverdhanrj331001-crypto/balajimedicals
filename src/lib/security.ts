@@ -61,11 +61,10 @@ if (typeof setInterval !== 'undefined') {
 export function sanitizeInput(input: any): any {
   if (typeof input === 'string') {
     return input
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;')
-      .replace(/\//g, '&#x2F;')
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/&#x2F;/g, '/')
+      .replace(/&quot;/g, '"')
+      .replace(/&#x27;/g, "'")
       .trim();
   }
   if (Array.isArray(input)) {

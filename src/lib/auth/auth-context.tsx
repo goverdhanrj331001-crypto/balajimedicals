@@ -14,7 +14,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const COOKIE_NAME = 'medidemo-session';
+const COOKIE_NAME = 'bms_session';
 const ONE_WEEK = 60 * 60 * 24 * 7;
 
 function setCookie(name: string, value: string, maxAge: number) {

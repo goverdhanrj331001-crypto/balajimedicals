@@ -40,7 +40,7 @@ export function ProductBand({ title, color, products }: ProductBandProps) {
               <Link href={`/products/${product.id}`} className="block w-full text-left">
                 <ProductArt product={product} className="mb-3 aspect-square w-full rounded" />
                 <h3 className="truncate text-[14px]">{product.shortName}</h3>
-                <p className="text-[12px] font-bold text-[#006872]">${product.price.toFixed(2)}</p>
+                <p className="text-[12px] font-bold text-[#006872]">₹{product.price.toLocaleString('en-IN')}</p>
               </Link>
               {/* Cart controls */}
               {isInCart ? (

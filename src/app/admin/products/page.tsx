@@ -183,7 +183,7 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="px-3 py-3 text-[12px]">{p.brand}</td>
                       <td className="px-3 py-3 text-[12px]">{p.productType || '—'}</td>
-                      <td className="px-3 py-3 text-[12px] font-bold">${Number(p.price).toFixed(2)}</td>
+                      <td className="px-3 py-3 text-[12px] font-bold">₹{Number(p.price).toLocaleString('en-IN')}</td>
                       <td className="px-3 py-3 text-[12px]">{p.stock}</td>
                       <td className="px-3 py-3">
                         <div className="flex flex-col gap-1">

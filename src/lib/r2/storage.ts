@@ -31,7 +31,7 @@ async function saveToR2(buffer: Buffer, ext: string, contentType: string): Promi
     endpoint: `https://${r2Config.accountId}.r2.cloudflarestorage.com`,
     credentials: { accessKeyId: r2Config.accessKeyId, secretAccessKey: r2Config.secretAccessKey },
   });
-  const key = `medidemo/${randomUUID()}${ext}`;
+  const key = `uploads/${randomUUID()}${ext}`;
   await client.send(
     new PutObjectCommand({
       Bucket: r2Config.bucket,
@@ -71,14 +71,14 @@ export async function deleteFile(urlOrKey: string): Promise<boolean> {
       await fs.unlink(p);
       return true;
     }
-    if (isR2Configured && (urlOrKey.includes('r2.cloudflarestorage.com') || urlOrKey.startsWith('medidemo/'))) {
+    if (isR2Configured && (urlOrKey.includes('r2.cloudflarestorage.com') || urlOrKey.startsWith('uploads/'))) {
       const { S3Client, DeleteObjectCommand } = await import('@aws-sdk/client-s3');
       const client = new S3Client({
         region: 'auto',
         endpoint: `https://${r2Config.accountId}.r2.cloudflarestorage.com`,
         credentials: { accessKeyId: r2Config.accessKeyId, secretAccessKey: r2Config.secretAccessKey },
       });
-      const key = urlOrKey.includes('medidemo/') ? urlOrKey.slice(urlOrKey.indexOf('medidemo/')) : urlOrKey;
+      const key = urlOrKey.includes('uploads/') ? urlOrKey.slice(urlOrKey.indexOf('uploads/')) : urlOrKey;
       await client.send(new DeleteObjectCommand({ Bucket: r2Config.bucket, Key: key }));
       return true;
     }

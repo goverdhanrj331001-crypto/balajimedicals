@@ -38,7 +38,20 @@ export async function POST(req: NextRequest) {
 
     const raw = await req.json();
     const body = sanitizeInput(raw);
-    const { items, total, shippingAddress, type = 'medicine', paymentMethod = 'COD', scheduledAt, prescriptionUrl } = body;
+    const {
+      items,
+      total,
+      shippingAddress,
+      type = 'medicine',
+      paymentMethod = 'COD',
+      scheduledAt,
+      prescriptionUrl,
+      collectionMode,
+      patientName,
+      patientPhone,
+      patientAge,
+      patientGender,
+    } = body;
 
     // Validate items
     if (!items?.length) return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -76,15 +89,20 @@ export async function POST(req: NextRequest) {
     const paymentStatus = 'Pending';
 
     const order = await repo.create('orders', {
-      id: 'MD-' + randomUUID().slice(0, 6).toUpperCase(),
+      id: 'BMS-' + randomUUID().slice(0, 6).toUpperCase(),
       userId: user.uid,
       customerName: user.name ?? body.customerName ?? 'Guest',
-      customerEmail: user.email ?? body.customerEmail ?? 'guest@medidemo.com',
+      customerEmail: user.email ?? body.customerEmail ?? 'guest@balajimedical.com',
       items,
       total,
       shippingAddress,
       status: orderStatus,
       type,
+      collectionMode: collectionMode ?? (type === 'lab' ? 'home' : undefined),
+      patientName: patientName || user.name,
+      patientPhone: patientPhone || (user as any).phone,
+      patientAge: patientAge || (user as any).age,
+      patientGender: patientGender || (user as any).gender,
       paymentMethod,
       paymentStatus,
       scheduledAt,

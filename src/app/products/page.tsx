@@ -1,20 +1,29 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { DesktopHeader } from '@/components/layout/desktop-header';
 import { StoreHeader } from '@/components/layout/store-header';
 import { DesktopFooter } from '@/components/layout/desktop-footer';
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { ProductCard } from '@/components/store/product-card';
 import { Icon } from '@/components/ui/icon';
-import type { Product, Category } from '@/types';
+import type { Product, Category, Banner } from '@/types';
 
 interface Catalog {
   products: Product[];
   categories: Category[];
+  banners?: Banner[];
 }
+
+const sortOptions = [
+  { value: 'default', label: 'Featured / Default' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+  { value: 'name', label: 'Name: A to Z' },
+];
 
 function ProductsPageInner() {
   const params = useSearchParams();
@@ -24,6 +33,8 @@ function ProductsPageInner() {
   const [selectedCat, setSelectedCat] = useState(() => params.get('category') ?? 'all');
   const [selectedBrand, setSelectedBrand] = useState(() => params.get('brand') ?? 'all');
   const [sort, setSort] = useState<'default' | 'price-asc' | 'price-desc' | 'name'>('default');
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch('/api/public/catalog', { cache: 'no-store' })
@@ -31,6 +42,17 @@ function ProductsPageInner() {
       .then((d) => setData(d))
       .catch(console.error)
       .finally(() => setLoading(false));
+  }, []);
+
+  // Close sort dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
+        setSortOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Sync URL → state (only when params actually change)
@@ -70,78 +92,204 @@ function ProductsPageInner() {
     return list;
   }, [data, selectedCat, selectedBrand, search, sort]);
 
+  // Find banner specifically configured for products page (or fallback to hero banner)
+  const productsBanner = data?.banners?.find((b) => b.slot === 'products') ?? data?.banners?.find((b) => b.slot === 'hero');
+  const currentSortLabel = sortOptions.find((o) => o.value === sort)?.label ?? 'Featured / Default';
+
   return (
-    <div className="app-root min-h-screen pb-16 md:pb-0">
+    <div className="app-root min-h-screen pb-16 md:pb-0 bg-[#f8fafc]">
       <DesktopHeader />
-      <StoreHeader search={false} />
-      <main className="desktop-canvas px-3 md:px-8 py-4">
-        <div className="mb-4 flex items-end justify-between">
-          <div>
-            <h1 className="text-[24px] font-extrabold tracking-tight">All Products</h1>
-            <p className="text-[13px] text-[#3e494a]">
-              {loading ? 'Loading…' : `${filtered.length} products available`}
-            </p>
+      <StoreHeader search={true} />
+
+      <main className="mx-auto max-w-7xl px-4 md:px-8 py-5">
+        {/* ─── Top Banner ─── */}
+        {productsBanner && (
+          <div className="mb-6 overflow-hidden rounded-2xl border border-[#e2e8f0] shadow-xs">
+            {productsBanner.imageUrl ? (
+              <Link href={(productsBanner.ctaHref || '/products').replace(/&#x2F;/g, '/')} className="block overflow-hidden transition hover:opacity-95">
+                <img
+                  src={productsBanner.imageUrl.replace(/&#x2F;/g, '/')}
+                  alt={productsBanner.title || 'Products Banner'}
+                  className="h-[200px] md:h-[260px] lg:h-[300px] w-full object-cover"
+                />
+              </Link>
+            ) : (
+              <div className="relative overflow-hidden bg-gradient-to-r from-[#006872] via-[#007a87] to-[#008f9f] p-6 md:p-10 text-white">
+                <div className="relative z-10 max-w-2xl space-y-2">
+                  {productsBanner.badge && (
+                    <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-xs">
+                      {productsBanner.badge}
+                    </span>
+                  )}
+                  <h2 className="text-[24px] md:text-[32px] font-extrabold leading-tight">
+                    {productsBanner.title || 'All Products & Healthcare Essentials'}
+                  </h2>
+                  {productsBanner.subtitle && (
+                    <p className="text-[13.5px] text-white/90 leading-relaxed">
+                      {productsBanner.subtitle}
+                    </p>
+                  )}
+                  {productsBanner.ctaText && (
+                    <div className="pt-2">
+                      <Link
+                        href={(productsBanner.ctaHref || '/products').replace(/&#x2F;/g, '/')}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#ffc107] px-4 py-2 text-[12.5px] font-bold text-[#006872] transition hover:bg-[#ffb300] shadow-xs"
+                      >
+                        <span>{productsBanner.ctaText}</span>
+                        <Icon name="arrow_forward" className="text-[15px]" />
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as any)}
-            className="rounded-lg border border-[#bdc9ca] bg-white px-3 py-2 text-[12px] outline-none focus:border-[#006872]"
-          >
-            <option value="default">Default</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="name">Name: A to Z</option>
-          </select>
+        )}
+
+        {/* ─── Page Title & Items Counter ─── */}
+        <div className="mb-4">
+          <h1 className="text-[24px] font-bold tracking-tight text-[#0f172a]">All Products</h1>
+          <p className="text-[12.5px] text-[#64748b]">
+            {loading ? 'Loading products…' : `${filtered.length} items found`}
+          </p>
         </div>
 
-        {/* Search & filter bar */}
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row">
+        {/* ─── Search & Custom Sort Bar ─── */}
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+          {/* Search Box */}
           <div className="relative flex-1">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products..."
-              className="w-full rounded-lg border border-[#bdc9ca] bg-white py-2.5 pl-10 pr-3 text-[13px] outline-none focus:border-[#006872]"
+              placeholder="Search by medicine name, brand, or salt..."
+              className="w-full rounded-xl border border-[#cbd5e1] bg-white py-2.5 pl-10 pr-9 text-[13px] font-medium text-[#1e293b] outline-none focus:border-[#006872] shadow-2xs placeholder:text-[#94a3b8]"
             />
-            <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6e797b]" />
+            <Icon name="search" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748b] text-[18px]" />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 text-[#475569] text-[11px] font-bold transition cursor-pointer"
+              >
+                ✕
+              </button>
+            )}
           </div>
-          <select
-            value={selectedCat}
-            onChange={(e) => setSelectedCat(e.target.value)}
-            className="rounded-lg border border-[#bdc9ca] bg-white px-3 py-2.5 text-[12px] outline-none focus:border-[#006872]"
-          >
-            <option value="all">All Categories</option>
-            {data?.categories.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
+
+          {/* Custom Sleek Sort Dropdown */}
+          <div className="relative shrink-0" ref={sortRef}>
+            <button
+              type="button"
+              onClick={() => setSortOpen((v) => !v)}
+              className="flex w-full items-center justify-between gap-2 rounded-xl border border-[#cbd5e1] bg-white px-3.5 py-2.5 text-[12.5px] font-medium text-[#0f172a] shadow-2xs hover:border-[#006872] transition cursor-pointer sm:w-auto"
+            >
+              <div className="flex items-center gap-1.5">
+                <Icon name="swap_vert" className="text-[18px] text-[#006872]" />
+                <span className="text-[#64748b]">Sort by:</span>
+                <span className="font-bold text-[#0f172a]">{currentSortLabel}</span>
+              </div>
+              <Icon
+                name="expand_more"
+                className={`text-[18px] text-[#64748b] transition-transform duration-200 ${sortOpen ? 'rotate-180 text-[#006872]' : ''}`}
+              />
+            </button>
+
+            {sortOpen && (
+              <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl border border-[#e2e8f0] bg-white p-1.5 shadow-xl z-30 animate-in fade-in zoom-in-95 duration-100">
+                {sortOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      setSort(opt.value as any);
+                      setSortOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-[12.5px] transition cursor-pointer ${
+                      sort === opt.value
+                        ? 'bg-[#f0fdfa] text-[#006872] font-bold'
+                        : 'text-[#334155] hover:bg-[#f1f5f9]'
+                    }`}
+                  >
+                    <span>{opt.label}</span>
+                    {sort === opt.value && (
+                      <Icon name="check" className="text-[16px] text-[#006872]" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Products grid */}
+        {/* ─── Quick Category Pills ─── */}
+        {data?.categories && data.categories.length > 0 && (
+          <div className="mb-6 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <button
+              type="button"
+              onClick={() => setSelectedCat('all')}
+              className={`rounded-full px-4 py-1.5 text-[12px] font-semibold transition shrink-0 cursor-pointer ${
+                selectedCat === 'all'
+                  ? 'bg-[#006872] text-white shadow-2xs'
+                  : 'bg-white text-[#475569] border border-[#e2e8f0] hover:border-[#cbd5e1]'
+              }`}
+            >
+              All
+            </button>
+            {data.categories.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedCat(cat.id)}
+                className={`rounded-full px-4 py-1.5 text-[12px] font-semibold transition shrink-0 cursor-pointer ${
+                  selectedCat === cat.id
+                    ? 'bg-[#006872] text-white shadow-2xs'
+                    : 'bg-white text-[#475569] border border-[#e2e8f0] hover:border-[#cbd5e1]'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* ─── Products Grid ─── */}
         {loading ? (
           <div className="flex h-96 items-center justify-center">
             <span className="h-8 w-8 animate-spin rounded-full border-2 border-[#006872]/30 border-t-[#006872]" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <Icon name="search_off" className="text-[64px] text-[#bdc9ca]" />
-            <p className="mt-3 text-[14px] font-bold">No products found</p>
-            <p className="text-[12px] text-[#6e797b]">Try a different search or category.</p>
+          <div className="flex flex-col items-center justify-center py-20 text-center rounded-3xl bg-white border border-[#e2e8f0] p-8">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <Icon name="search_off" className="text-[36px]" />
+            </div>
+            <p className="mt-4 text-[16px] font-bold text-[#0f172a]">No Products Found</p>
+            <p className="mt-1 text-[13px] text-[#64748b]">Try clearing your search or switching categories.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setSearch('');
+                setSelectedCat('all');
+                setSelectedBrand('all');
+              }}
+              className="mt-4 rounded-xl bg-[#006872] px-4 py-2 text-[12.5px] font-bold text-white transition hover:bg-[#00535b]"
+            >
+              Reset Filters
+            </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
             {filtered.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
         )}
       </main>
+
       <DesktopFooter />
       <BottomNav />
     </div>
   );
 }
-
 
 export default function ProductsPage(props: any) {
   return (

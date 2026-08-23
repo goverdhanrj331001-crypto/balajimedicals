@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from '@/components/ui/icon';
-import { uploadFile } from '@/lib/r2/storage';
 
 interface ThumbnailUploadProps {
   value?: string;
@@ -48,6 +47,8 @@ export function ThumbnailUpload({ value, onChange, label = 'Thumbnail Image' }: 
     if (file) handleFile(file);
   };
 
+  const cleanUrl = value ? value.replace(/&#x2F;/g, '/') : '';
+
   return (
     <div>
       <span className="mb-1.5 block text-[11px] font-bold text-[#3e494a]">
@@ -56,8 +57,8 @@ export function ThumbnailUpload({ value, onChange, label = 'Thumbnail Image' }: 
       <div className="flex items-start gap-4">
         {/* Preview */}
         <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-xl border-2 border-[#bdc9ca] bg-[#f5f3f3]">
-          {value ? (
-            <img src={value} alt="Thumbnail" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+          {cleanUrl ? (
+            <img src={cleanUrl} alt="Thumbnail" loading="lazy" decoding="async" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center text-[#bdc9ca]">
               <Icon name="image" className="text-[32px]" />
