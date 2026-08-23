@@ -107,28 +107,39 @@ function ScheduleLabTestPageInner() {
   const now = new Date();
   const currentHour = now.getHours();
   const currentMin = now.getMinutes();
-  const startHour = parseInt(serviceStart.split(':')[0]);
-  const startMin = parseInt(serviceStart.split(':')[1]);
-  const endHour = parseInt(serviceEnd.split(':')[0]);
-  const endMin = parseInt(serviceEnd.split(':')[1]);
+  const startHour = parseInt(serviceStart.split(':')[0]) || 9;
+  const startMin = parseInt(serviceStart.split(':')[1]) || 0;
+  const endHour = parseInt(serviceEnd.split(':')[0]) || 21;
+  const endMin = parseInt(serviceEnd.split(':')[1]) || 0;
   const currentMinutes = currentHour * 60 + currentMin;
   const startMinutes = startHour * 60 + startMin;
   const endMinutes = endHour * 60 + endMin;
   const isBookingOpen = currentMinutes >= startMinutes && currentMinutes <= endMinutes;
 
-  // Generate time slots based on service hours (every 30 min)
-  const timeSlots: string[] = [];
-  for (let m = startMinutes; m <= endMinutes; m += 30) {
-    const h = Math.floor(m / 60);
-    const min = m % 60;
-    const slot = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+  const formatSlotLabel = (sh: number, eh: number) => {
+    const to12 = (h: number) => {
+      const displayH = h % 12 || 12;
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      return `${displayH}:00 ${ampm}`;
+    };
+    return `${to12(sh)} – ${to12(eh)}`;
+  };
+
+  // Generate 1-hour interval time slots (e.g. 9:00 AM – 10:00 AM, 10:00 AM – 11:00 AM, etc.)
+  const timeSlots: { key: string; label: string; startMinutes: number }[] = [];
+  for (let h = startHour; h < endHour; h++) {
+    const nextH = h + 1;
+    const startM = h * 60;
+    const slotKey = `${String(h).padStart(2, '0')}:00`;
+    const slotLabel = formatSlotLabel(h, nextH);
+
     // For today, only show future slots
     if (selectedDate === availableDates[0].value) {
-      if (m > currentMinutes) {
-        timeSlots.push(slot);
+      if (startM > currentMinutes) {
+        timeSlots.push({ key: slotKey, label: slotLabel, startMinutes: startM });
       }
     } else {
-      timeSlots.push(slot);
+      timeSlots.push({ key: slotKey, label: slotLabel, startMinutes: startM });
     }
   }
 
@@ -137,7 +148,7 @@ function ScheduleLabTestPageInner() {
     const hour = parseInt(h);
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const displayHour = hour % 12 || 12;
-    return `${displayHour}:${m} ${ampm}`;
+    return `${displayHour}:${m || '00'} ${ampm}`;
   };
 
   const onBook = async (e: React.FormEvent) => {
@@ -461,7 +472,7 @@ function ScheduleLabTestPageInner() {
                     <p className="mb-2 text-[12px] font-bold text-[#334155]">
                       Available Time Slots ({formatTime(serviceStart)} – {formatTime(serviceEnd)})
                     </p>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                       {timeSlots.length === 0 ? (
                         <p className="col-span-full rounded-xl bg-[#fff1f2] border border-[#fecdd3] p-3 text-center text-[12px] font-bold text-[#e11d48]">
                           No slots available for today. Please select tomorrow.
@@ -469,16 +480,17 @@ function ScheduleLabTestPageInner() {
                       ) : (
                         timeSlots.map((slot) => (
                           <button
-                            key={slot}
+                            key={slot.key}
                             type="button"
-                            onClick={() => setSelectedTime(slot)}
-                            className={`rounded-xl border py-2.5 px-1 text-[12px] font-bold transition cursor-pointer text-center ${
-                              selectedTime === slot
+                            onClick={() => setSelectedTime(slot.key)}
+                            className={`rounded-xl border py-2.5 px-3 text-[12px] font-bold transition cursor-pointer text-center flex items-center justify-center gap-1.5 ${
+                              selectedTime === slot.key
                                 ? 'border-[#006872] bg-[#006872] text-white shadow-xs'
-                                : 'border-[#e2e8f0] bg-white text-[#334155] hover:bg-[#f8fafc]'
+                                : 'border-[#e2e8f0] bg-white text-[#334155] hover:border-[#006872] hover:bg-[#f0fdfa]'
                             }`}
                           >
-                            {formatTime(slot)}
+                            <Icon name="schedule" className={`text-[15px] ${selectedTime === slot.key ? 'text-white' : 'text-[#006872]'}`} />
+                            <span>{slot.label}</span>
                           </button>
                         ))
                       )}
