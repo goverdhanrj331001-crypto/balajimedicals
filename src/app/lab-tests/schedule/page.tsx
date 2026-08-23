@@ -245,8 +245,8 @@ function ScheduleLabTestPageInner() {
           <span className="font-semibold text-[#0f172a]">Book Test</span>
         </nav>
 
-        <h1 className="text-[24px] md:text-[28px] font-extrabold tracking-tight text-[#0f172a]">Schedule Diagnostic Test</h1>
-        <p className="text-[13px] text-[#64748b] mt-0.5">Enter patient details and select sample collection mode.</p>
+        <h1 className="text-[20px] sm:text-[24px] md:text-[26px] font-semibold tracking-tight text-[#0f172a]">Schedule Diagnostic Test</h1>
+        <p className="text-[12.5px] text-[#64748b] mt-0.5">Enter patient details and select sample collection mode.</p>
 
         {loading ? (
           <div className="flex h-64 items-center justify-center">
@@ -264,19 +264,19 @@ function ScheduleLabTestPageInner() {
             </Link>
           </div>
         ) : (
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-            <form onSubmit={onBook} className="space-y-5">
+          <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_360px]">
+            <form onSubmit={onBook} className="space-y-4">
               {/* Service Status banner */}
-              <div className={`rounded-2xl p-4 border ${isBookingOpen ? 'bg-[#f0fdfa] border-[#ccfbf1]' : 'bg-[#fff1f2] border-[#fecdd3]'}`}>
+              <div className={`rounded-2xl p-3.5 sm:p-4 border ${isBookingOpen ? 'bg-[#f0fdfa] border-[#ccfbf1]' : 'bg-[#fff1f2] border-[#fecdd3]'}`}>
                 <div className="flex items-center gap-3">
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${isBookingOpen ? 'bg-[#006872] text-white' : 'bg-[#e11d48] text-white'}`}>
-                    <Icon name={isBookingOpen ? 'check_circle' : 'schedule'} className="text-[22px]" />
+                  <div className={`flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl ${isBookingOpen ? 'bg-[#006872] text-white' : 'bg-[#e11d48] text-white'}`}>
+                    <Icon name={isBookingOpen ? 'check_circle' : 'schedule'} className="text-[20px] sm:text-[22px]" />
                   </div>
                   <div>
-                    <p className={`text-[13.5px] font-bold ${isBookingOpen ? 'text-[#006872]' : 'text-[#e11d48]'}`}>
+                    <p className={`text-[13px] sm:text-[13.5px] font-semibold ${isBookingOpen ? 'text-[#006872]' : 'text-[#e11d48]'}`}>
                       {isBookingOpen ? 'Lab Booking Is Open Now' : 'Booking Hours Notice'}
                     </p>
-                    <p className="text-[11.5px] text-[#64748b]">
+                    <p className="text-[11px] sm:text-[11.5px] text-[#64748b]">
                       Service Hours: {formatTime(serviceStart)} to {formatTime(serviceEnd)}
                       {!isBookingOpen && ' — You may still select tomorrow for advance booking'}
                     </p>
@@ -285,18 +285,13 @@ function ScheduleLabTestPageInner() {
               </div>
 
               {/* ─── 1. Patient Details (Auto-prefilled from Profile) ─── */}
-              <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#f1f5f9] pb-3">
-                  <div>
-                    <h2 className="text-[15px] font-bold text-[#0f172a] flex items-center gap-2">
-                      <Icon name="person" className="text-[#006872] text-[18px]" />
-                      <span>1. Patient Information</span>
-                    </h2>
-                    <p className="text-[11.5px] text-[#64748b]">Auto-filled from your profile. Update if booking for a family member.</p>
-                  </div>
-                  <span className="rounded-full bg-[#f0fdfa] px-2.5 py-0.5 text-[10.5px] font-bold text-[#006872]">
-                    Profile Synced
-                  </span>
+              <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-3.5">
+                <div className="border-b border-[#f1f5f9] pb-3">
+                  <h2 className="text-[14.5px] font-semibold text-[#0f172a] flex items-center gap-2">
+                    <Icon name="person" className="text-[#006872] text-[18px]" />
+                    <span>1. Patient Information</span>
+                  </h2>
+                  <p className="text-[11px] sm:text-[11.5px] text-[#64748b] mt-0.5">Please provide patient details for test registration.</p>
                 </div>
 
                 <div className="grid gap-3.5 sm:grid-cols-2">
@@ -354,36 +349,36 @@ function ScheduleLabTestPageInner() {
               </div>
 
               {/* ─── 2. Sample Collection Mode Selection ─── */}
-              <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-4">
+              <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-3.5">
                 <div className="border-b border-[#f1f5f9] pb-3">
-                  <h2 className="text-[15px] font-bold text-[#0f172a] flex items-center gap-2">
+                  <h2 className="text-[14.5px] font-semibold text-[#0f172a] flex items-center gap-2">
                     <Icon name="biotech" className="text-[#006872] text-[18px]" />
                     <span>2. Sample Collection Mode</span>
                   </h2>
-                  <p className="text-[11.5px] text-[#64748b]">Choose between doorstep home pickup or in-store lab walk-in.</p>
+                  <p className="text-[11px] sm:text-[11.5px] text-[#64748b] mt-0.5">Choose between doorstep home pickup or in-store lab walk-in.</p>
                 </div>
 
                 {allowedMode === 'both' ? (
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div
                       onClick={() => setCollectionMode('home')}
-                      className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                      className={`cursor-pointer rounded-2xl border-2 p-3.5 sm:p-4 transition-all ${
                         collectionMode === 'home'
                           ? 'border-[#006872] bg-[#f0fdfa] shadow-xs'
                           : 'border-[#e2e8f0] bg-white hover:border-[#cbd5e1]'
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                        <div className={`flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl ${
                           collectionMode === 'home' ? 'bg-[#006872] text-white' : 'bg-[#f1f5f9] text-[#64748b]'
                         }`}>
-                          <Icon name="home" className="text-[22px]" />
+                          <Icon name="home" className="text-[20px] sm:text-[22px]" />
                         </div>
                         <div>
-                          <p className={`text-[14px] font-bold ${collectionMode === 'home' ? 'text-[#006872]' : 'text-[#0f172a]'}`}>
+                          <p className={`text-[13.5px] sm:text-[14px] font-semibold ${collectionMode === 'home' ? 'text-[#006872]' : 'text-[#0f172a]'}`}>
                             Home Sample Collection
                           </p>
-                          <p className="text-[11.5px] text-[#64748b] mt-0.5">
+                          <p className="text-[11px] sm:text-[11.5px] text-[#64748b] mt-0.5">
                             Certified phlebotomist visits your home address. Free collection.
                           </p>
                         </div>
@@ -392,23 +387,23 @@ function ScheduleLabTestPageInner() {
 
                     <div
                       onClick={() => setCollectionMode('lab')}
-                      className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
+                      className={`cursor-pointer rounded-2xl border-2 p-3.5 sm:p-4 transition-all ${
                         collectionMode === 'lab'
                           ? 'border-[#006872] bg-[#f0fdfa] shadow-xs'
                           : 'border-[#e2e8f0] bg-white hover:border-[#cbd5e1]'
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                        <div className={`flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl ${
                           collectionMode === 'lab' ? 'bg-[#006872] text-white' : 'bg-[#f1f5f9] text-[#64748b]'
                         }`}>
-                          <Icon name="local_hospital" className="text-[22px]" />
+                          <Icon name="local_hospital" className="text-[20px] sm:text-[22px]" />
                         </div>
                         <div>
-                          <p className={`text-[14px] font-bold ${collectionMode === 'lab' ? 'text-[#006872]' : 'text-[#0f172a]'}`}>
+                          <p className={`text-[13.5px] sm:text-[14px] font-semibold ${collectionMode === 'lab' ? 'text-[#006872]' : 'text-[#0f172a]'}`}>
                             Visit Lab / Store
                           </p>
-                          <p className="text-[11.5px] text-[#64748b] mt-0.5">
+                          <p className="text-[11px] sm:text-[11.5px] text-[#64748b] mt-0.5">
                             Walk-in directly to Balaji Medical Store diagnostic counter.
                           </p>
                         </div>
@@ -417,35 +412,35 @@ function ScheduleLabTestPageInner() {
                   </div>
                 ) : allowedMode === 'home' ? (
                   <div className="rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] p-3.5 flex items-center gap-3">
-                    <Icon name="home" className="text-[24px] text-[#16a34a]" />
+                    <Icon name="home" className="text-[22px] text-[#16a34a]" />
                     <div>
-                      <p className="text-[13px] font-bold text-[#166534]">Home Collection Only</p>
-                      <p className="text-[11.5px] text-[#15803d]">This specific test requires doorstep sample collection by our specialist.</p>
+                      <p className="text-[12.5px] font-semibold text-[#166534]">Home Collection Only</p>
+                      <p className="text-[11px] text-[#15803d]">This specific test requires doorstep sample collection by our specialist.</p>
                     </div>
                   </div>
                 ) : (
                   <div className="rounded-xl border border-[#c7d2fe] bg-[#eef2ff] p-3.5 flex items-center gap-3">
-                    <Icon name="local_hospital" className="text-[24px] text-[#4f46e5]" />
+                    <Icon name="local_hospital" className="text-[22px] text-[#4f46e5]" />
                     <div>
-                      <p className="text-[13px] font-bold text-[#3730a3]">In-Lab Physical Visit Only</p>
-                      <p className="text-[11.5px] text-[#4338ca]">This specific test requires specialized lab equipment available only at the center.</p>
+                      <p className="text-[12.5px] font-semibold text-[#3730a3]">In-Lab Physical Visit Only</p>
+                      <p className="text-[11px] text-[#4338ca]">This specific test requires specialized lab equipment available only at the center.</p>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* ─── 3. Schedule Date & Time ─── */}
-              <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-4">
+              <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-3.5">
                 <div className="border-b border-[#f1f5f9] pb-3">
-                  <h2 className="text-[15px] font-bold text-[#0f172a] flex items-center gap-2">
+                  <h2 className="text-[14.5px] font-semibold text-[#0f172a] flex items-center gap-2">
                     <Icon name="calendar_today" className="text-[#006872] text-[18px]" />
                     <span>3. Select Date &amp; Time Slot</span>
                   </h2>
-                  <p className="text-[11.5px] text-[#64748b]">Select your preferred appointment date and time.</p>
+                  <p className="text-[11px] sm:text-[11.5px] text-[#64748b] mt-0.5">Select your preferred appointment date and time.</p>
                 </div>
 
                 <div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2.5">
                     {availableDates.map((d) => (
                       <button
                         key={d.value}
@@ -460,21 +455,21 @@ function ScheduleLabTestPageInner() {
                             : 'border-[#e2e8f0] bg-white hover:border-[#cbd5e1]'
                         }`}
                       >
-                        <p className="text-[13.5px] font-bold text-[#006872]">{d.label}</p>
-                        <p className="text-[11.5px] text-[#64748b]">{d.day}</p>
+                        <p className="text-[13px] font-semibold text-[#006872]">{d.label}</p>
+                        <p className="text-[11px] text-[#64748b] mt-0.5">{d.day}</p>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {selectedDate && (
-                  <div className="pt-2">
-                    <p className="mb-2 text-[12px] font-bold text-[#334155]">
+                  <div className="pt-1">
+                    <p className="mb-2 text-[11.5px] font-semibold text-[#334155]">
                       Available Time Slots ({formatTime(serviceStart)} – {formatTime(serviceEnd)})
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                       {timeSlots.length === 0 ? (
-                        <p className="col-span-full rounded-xl bg-[#fff1f2] border border-[#fecdd3] p-3 text-center text-[12px] font-bold text-[#e11d48]">
+                        <p className="col-span-full rounded-xl bg-[#fff1f2] border border-[#fecdd3] p-3 text-center text-[11.5px] font-semibold text-[#e11d48]">
                           No slots available for today. Please select tomorrow.
                         </p>
                       ) : (
@@ -483,7 +478,7 @@ function ScheduleLabTestPageInner() {
                             key={slot.key}
                             type="button"
                             onClick={() => setSelectedTime(slot.key)}
-                            className={`rounded-xl border py-2.5 px-3 text-[12px] font-bold transition cursor-pointer text-center flex items-center justify-center gap-1.5 ${
+                            className={`rounded-xl border py-2.5 px-3 text-[11.5px] sm:text-[12px] font-semibold transition cursor-pointer text-center flex items-center justify-center gap-1.5 ${
                               selectedTime === slot.key
                                 ? 'border-[#006872] bg-[#006872] text-white shadow-xs'
                                 : 'border-[#e2e8f0] bg-white text-[#334155] hover:border-[#006872] hover:bg-[#f0fdfa]'
@@ -501,44 +496,44 @@ function ScheduleLabTestPageInner() {
 
               {/* ─── 4. Collection Address (if Home Collection) ─── */}
               {collectionMode === 'home' ? (
-                <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-3">
+                <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-3">
                   <div className="border-b border-[#f1f5f9] pb-3">
-                    <h2 className="text-[15px] font-bold text-[#0f172a] flex items-center gap-2">
+                    <h2 className="text-[14.5px] font-semibold text-[#0f172a] flex items-center gap-2">
                       <Icon name="location_on" className="text-[#006872] text-[18px]" />
                       <span>4. Doorstep Collection Address</span>
                     </h2>
-                    <p className="text-[11.5px] text-[#64748b]">Where should our phlebotomist collect the sample?</p>
+                    <p className="text-[11px] sm:text-[11.5px] text-[#64748b] mt-0.5">Where should our phlebotomist collect the sample?</p>
                   </div>
                   <div>
-                    <label className="mb-1 block text-[11.5px] font-bold text-[#334155]">Full Address (Street, Colony, City, Pin) *</label>
+                    <label className="mb-1 block text-[11.5px] font-semibold text-[#334155]">Full Address (Street, Colony, City, Pin) *</label>
                     <textarea
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder="e.g. House No. 42, Main Market Road, City - 331001"
                       required
-                      className="min-h-20 w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-3.5 py-2.5 text-[13px] outline-none focus:border-[#006872] focus:bg-white"
+                      className="min-h-18 w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-3.5 py-2.5 text-[12.5px] outline-none focus:border-[#006872] focus:bg-white transition"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-[11.5px] font-bold text-[#334155]">Special Instructions (optional)</label>
+                    <label className="mb-1 block text-[11.5px] font-semibold text-[#334155]">Special Instructions (optional)</label>
                     <input
                       type="text"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="e.g. Fasting required, ring bell 2nd floor"
-                      className="w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-3.5 py-2.5 text-[13px] outline-none focus:border-[#006872] focus:bg-white"
+                      className="w-full rounded-xl border border-[#cbd5e1] bg-[#f8fafc] px-3.5 py-2.5 text-[12.5px] outline-none focus:border-[#006872] focus:bg-white transition"
                     />
                   </div>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-2">
-                  <h2 className="text-[15px] font-bold text-[#0f172a] flex items-center gap-2">
+                <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 sm:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] space-y-2">
+                  <h2 className="text-[14.5px] font-semibold text-[#0f172a] flex items-center gap-2">
                     <Icon name="storefront" className="text-[#006872] text-[18px]" />
                     <span>Lab Center Location</span>
                   </h2>
-                  <p className="text-[13px] font-bold text-[#006872]">Balaji Medical Store &amp; Diagnostic Centre</p>
-                  <p className="text-[12px] text-[#64748b]">Main Market, City Center — Open Daily 09:00 AM to 09:00 PM</p>
-                  <p className="text-[11.5px] text-[#16a34a] font-medium">✓ No waiting queue for online appointment bookings.</p>
+                  <p className="text-[13px] font-semibold text-[#006872]">Balaji Medical Store &amp; Diagnostic Centre</p>
+                  <p className="text-[11.5px] text-[#64748b]">Main Market, City Center — Open Daily 09:00 AM to 09:00 PM</p>
+                  <p className="text-[11px] text-[#16a34a] font-medium">✓ No waiting queue for online appointment bookings.</p>
                 </div>
               )}
 
@@ -554,7 +549,7 @@ function ScheduleLabTestPageInner() {
                   !selectedTime ||
                   (collectionMode === 'home' && !address.trim())
                 }
-                className="w-full rounded-2xl bg-[#006872] py-4 text-[14px] font-bold text-white shadow-md hover:bg-[#00535b] disabled:opacity-50 cursor-pointer transition active:scale-98"
+                className="w-full rounded-2xl bg-[#006872] py-3.5 text-[13.5px] font-semibold text-white shadow-md hover:bg-[#00535b] disabled:opacity-50 cursor-pointer transition active:scale-98"
               >
                 {submitting ? 'Booking Test Appointment…' : `Confirm Booking · ₹${totalPrice.toLocaleString('en-IN')}`}
               </button>
