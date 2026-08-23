@@ -88,11 +88,25 @@ const nextConfig: NextConfig = {
   },
 
   // Server external packages (forces Node runtime to import natively without Webpack bundling ESM interop issues)
-  serverExternalPackages: ["firebase-admin", "jwks-rsa", "jose"],
+  serverExternalPackages: [
+    "firebase-admin",
+    "firebase-admin/app",
+    "firebase-admin/auth",
+    "firebase-admin/firestore",
+    "@google-cloud/firestore",
+    "jwks-rsa",
+    "jose"
+  ],
 
   // Experimental optimizations
   experimental: {
     optimizePackageImports: ["@radix-ui/react-accordion", "sonner"],
+    serverComponentsExternalPackages: [
+      "firebase-admin",
+      "jwks-rsa",
+      "jose",
+      "@google-cloud/firestore",
+    ],
   },
 
   // Powered by header removal
