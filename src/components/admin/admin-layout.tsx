@@ -4,6 +4,7 @@ import { useState, type ReactNode, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AdminSidebar } from './admin-sidebar';
+import { OrderNotificationListener, OrderSoundToggle } from './order-notifier';
 import { Icon } from '@/components/ui/icon';
 import { useAuth } from '@/lib/auth/auth-context';
 
@@ -50,6 +51,7 @@ export function AdminLayout({ title, children }: AdminLayoutProps) {
 
   return (
     <div className="admin-shell min-h-[100dvh] bg-[#f5f3f3] text-[#1b1c1c]">
+      <OrderNotificationListener />
       <AdminSidebar />
 
       {/* Mobile drawer overlay */}
@@ -92,7 +94,9 @@ export function AdminLayout({ title, children }: AdminLayoutProps) {
               <h1 className="text-[18px] font-bold text-[#1b1c1c]">{title}</h1>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <OrderSoundToggle />
+
             <Link
               href="/admin/settings"
               className="hidden items-center gap-2 rounded-full bg-[#f0eded] py-1.5 pl-1.5 pr-3 sm:flex"
