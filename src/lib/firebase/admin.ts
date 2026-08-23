@@ -43,15 +43,6 @@ export async function getAdminApp() {
   }
 }
 
-export async function getAdminAuth() {
-  if (!isAdminSdkConfigured) return null;
-  if (adminAuth) return adminAuth;
-  const app = await getAdminApp();
-  if (!app) return null;
-  const { getAuth } = await import('firebase-admin/auth');
-  adminAuth = getAuth(app as never);
-  return adminAuth;
-}
 
 export async function getAdminFirestore() {
   if (!isAdminSdkConfigured) return null;

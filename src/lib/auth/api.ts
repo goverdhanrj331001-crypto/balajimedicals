@@ -1,14 +1,7 @@
 // ─── Auth API (server-side) ──────────────────────────────────────
-// Handles login, signup, and logout.
-//
-// In Firebase mode:
-//   - Uses Firebase Auth REST API to verify password (Admin SDK can't verify passwords)
-//   - Then issues a Firebase custom token via Admin SDK for the client to use as session
-// In Mock mode:
-//   - Validates against seeded in-memory users
-//   - Issues a base64-encoded session token
+// Handles login, signup, and logout using Firebase Auth REST API (for zero ESM bundler issues)
+// and repository/Firestore for user profiles and roles.
 
-import { isAdminSdkConfigured, getAdminAuth } from '@/lib/firebase/admin';
 import { isFirebaseConfigured } from '@/lib/firebase/config';
 import { mem } from '@/lib/store/mem-store';
 import { repo } from '@/lib/store/repo';
@@ -21,9 +14,12 @@ export interface LoginResult {
 }
 
 // ─── Firebase Auth REST API call ────────────────────────────────
-// Verifies email+password and returns the user's Firebase UID.
-// We can't use Admin SDK for this — it doesn't expose password verification.
-async function verifyPasswordWithFirebase(email: string, password: string): Promise<string> {
+// Verifies email+password and returns user details.
+// Uses Google's official REST endpoints — 100% serverless/edge/Node compatible.
+async function verifyPasswordWithFirebase(
+  email: string,
+  password: string,
+): Promise<{ uid: string; displayName?: string; email: string }> {
   const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY!;
   const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
   const res = await fetch(url, {
@@ -38,12 +34,23 @@ async function verifyPasswordWithFirebase(email: string, password: string): Prom
   const data = await res.json();
   if (!res.ok) {
     const msg = data?.error?.message ?? 'Login failed';
-    if (msg.includes('INVALID_LOGIN_CREDENTIALS')) {
+    if (
+      msg.includes('INVALID_LOGIN_CREDENTIALS') ||
+      msg.includes('EMAIL_NOT_FOUND') ||
+      msg.includes('INVALID_PASSWORD')
+    ) {
       throw new Error('Invalid email or password');
+    }
+    if (msg.includes('USER_DISABLED')) {
+      throw new Error('This account has been disabled');
     }
     throw new Error(msg);
   }
-  return data.localId as string;
+  return {
+    uid: data.localId as string,
+    displayName: data.displayName || undefined,
+    email: data.email || email,
+  };
 }
 
 async function createFirebaseUser(email: string, password: string, name: string): Promise<string> {
@@ -82,14 +89,6 @@ async function createFirebaseUser(email: string, password: string, name: string)
     // Non-fatal
   }
 
-  // Set custom claims via Admin SDK
-  if (isAdminSdkConfigured) {
-    const adminAuth = await getAdminAuth();
-    if (adminAuth) {
-      await (adminAuth as any).setCustomUserClaims(uid, { role: 'patient', status: 'active' });
-    }
-  }
-
   return uid;
 }
 
@@ -98,52 +97,70 @@ export async function loginWithEmail(email: string, password: string): Promise<L
   if (!email || !password) throw new Error('Email and password are required');
 
   if (isFirebaseConfigured) {
-    // Step 1: Verify password via Firebase Auth REST API
-    const uid = await verifyPasswordWithFirebase(email, password);
+    // Step 1: Verify password via Firebase Auth REST API (fast, reliable, no ESM issues)
+    const fbUser = await verifyPasswordWithFirebase(email, password);
+    const uid = fbUser.uid;
 
-    // Step 2: Get user info + role via Admin SDK & Firestore
-    if (isAdminSdkConfigured) {
-      const adminAuth = await getAdminAuth();
-      if (!adminAuth) throw new Error('Auth not initialized');
-      const userRecord = await (adminAuth as any).getUser(uid);
-      let role = userRecord.customClaims?.role as UserRole | undefined;
-      let status = userRecord.customClaims?.status as string | undefined;
-
-      // Fallback: Check Firestore /users collection if custom claims are not set yet
-      if (!role) {
-        try {
-          const dbUser = await repo.get('users', uid);
-          if (dbUser?.role) {
-            role = dbUser.role as UserRole;
-            status = dbUser.status || 'active';
-            // Sync custom claims to Firebase Auth for instant future checks
-            await (adminAuth as any).setCustomUserClaims(uid, { role, status });
-          }
-        } catch (err) {
-          console.error('[loginWithEmail] Firestore role fallback error:', err);
-        }
-      }
-
-      if (!role) role = 'patient';
-      if (!status) status = 'active';
-      const name = userRecord.displayName ?? email;
-
-      // Step 3: Mint a session token (base64-encoded JSON).
-      // We don't use Firebase custom tokens because verifyIdToken()
-      // rejects them — they're meant for client-side signInWithCustomToken.
-      const token = Buffer.from(
-        JSON.stringify({ uid, email, ts: Date.now() }),
-        'utf-8',
-      ).toString('base64');
-      return {
-        token,
-        user: { uid, email: userRecord.email ?? email, name, role, status },
-      };
+    // Step 2: Get user profile & role from database
+    let dbUser: any = null;
+    try {
+      dbUser = await repo.get('users', uid);
+    } catch {
+      // ignore
     }
-    throw new Error('Admin SDK not configured');
+
+    if (!dbUser) {
+      try {
+        const users = await repo.list('users');
+        dbUser = users.find((x: any) => x.email?.toLowerCase() === email.toLowerCase());
+        if (!dbUser) {
+          dbUser = {
+            id: uid,
+            name: fbUser.displayName || email.split('@')[0],
+            email: fbUser.email,
+            role: 'patient',
+            status: 'active',
+            createdAt: Date.now(),
+            lastLogin: Date.now(),
+          };
+          await repo.create('users', dbUser);
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    const role = (dbUser?.role as UserRole) || 'patient';
+    const status = dbUser?.status || 'active';
+    if (status !== 'active') {
+      throw new Error(`Account is ${status}`);
+    }
+
+    const name = dbUser?.name || fbUser.displayName || email.split('@')[0];
+
+    // Step 3: Mint a session token (base64-encoded JSON)
+    const token = Buffer.from(
+      JSON.stringify({ uid, email: fbUser.email, ts: Date.now() }),
+      'utf-8',
+    ).toString('base64');
+
+    return {
+      token,
+      user: {
+        uid,
+        email: fbUser.email,
+        name,
+        role,
+        status,
+        phone: dbUser?.phone,
+        age: dbUser?.age,
+        gender: dbUser?.gender,
+        address: dbUser?.address,
+      },
+    };
   }
 
-  // Mock auth: match against seeded users.
+  // Mock auth: match against seeded users
   const users = await mem.authUsers.list();
   const u = users.find(
     (x: any) => x.email.toLowerCase() === email.toLowerCase() && x.password === password,
@@ -172,7 +189,7 @@ export async function signupWithEmail(
     // Step 1: Create user in Firebase Auth via REST API
     const uid = await createFirebaseUser(email, password, name);
 
-    // Step 2: Persist user record in Firestore
+    // Step 2: Persist user record in database
     try {
       await repo.create('users', {
         id: uid,
@@ -184,7 +201,6 @@ export async function signupWithEmail(
         createdAt: Date.now(),
       });
     } catch (e) {
-      // Non-fatal — user was created in Auth already
       console.error('[signup] failed to persist user record:', e);
     }
 
@@ -214,7 +230,14 @@ export async function signupWithEmail(
     status: 'active' as const,
   };
   await mem.authUsers.create(newUser);
-  await repo.create('users', { id, name, email, role: 'patient', status: 'active', lastLogin: Date.now() });
+  await repo.create('users', {
+    id,
+    name,
+    email,
+    role: 'patient',
+    status: 'active',
+    lastLogin: Date.now(),
+  });
   const token = Buffer.from(
     JSON.stringify({ uid: id, email, ts: Date.now() }),
     'utf-8',
