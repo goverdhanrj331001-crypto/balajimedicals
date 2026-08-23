@@ -384,21 +384,11 @@ export function ProductForm({ initial, brands, categories, onSave, onCancel }: P
                 </Field>
 
                 <Field label="SKU" error={errors.sku} hint="Unique stock keeping unit">
-                  <div className="flex gap-2">
-                    <TextInput
-                      value={form.sku ?? ''}
-                      onChange={(e) => set('sku', e.target.value)}
-                      placeholder="MED-001"
-                      className="flex-1"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => set('sku', generateSKU(form.brand || 'PRD', form.name || 'XXX'))}
-                      className="rounded-lg border border-[#bdc9ca] bg-white px-3 text-[11px] font-bold text-[#006872] hover:bg-[#d9eeee]"
-                    >
-                      <Icon name="auto_awesome" className="text-[14px]" /> Generate
-                    </button>
-                  </div>
+                  <TextInput
+                    value={form.sku ?? ''}
+                    onChange={(e) => set('sku', e.target.value)}
+                    placeholder="MED-001"
+                  />
                 </Field>
 
                 <Field label="Selling Price (₹)" error={errors.price}>
@@ -842,21 +832,11 @@ export function ProductForm({ initial, brands, categories, onSave, onCancel }: P
             <div className="space-y-4">
               <h3 className="text-[14px] font-bold text-[#006872]">SEO Settings</h3>
               <Field label="URL Slug" hint="Auto-generated from name">
-                <div className="flex gap-2">
-                  <TextInput
-                    value={form.slug ?? ''}
-                    onChange={(e) => set('slug', slugify(e.target.value))}
-                    placeholder="dolo-650-tablet"
-                    className="flex-1"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => set('slug', slugify(form.name || ''))}
-                    className="rounded-lg border border-[#bdc9ca] bg-white px-3 text-[11px] font-bold text-[#006872] hover:bg-[#d9eeee]"
-                  >
-                    <Icon name="auto_awesome" className="text-[14px]" /> Auto
-                  </button>
-                </div>
+                <TextInput
+                  value={form.slug ?? ''}
+                  onChange={(e) => set('slug', slugify(e.target.value))}
+                  placeholder="dolo-650-tablet"
+                />
               </Field>
               <Field label="SEO Title">
                 <TextInput

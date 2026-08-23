@@ -50,10 +50,14 @@ export function AdminSidebar() {
 
   return (
     <aside className="admin-sidebar fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col bg-[#006872] text-white lg:flex">
-      <div className="flex items-center gap-3 border-b border-white/15 px-6 py-5">
-        <img src="/logo.webp" alt="Balaji Medical Store" className="h-10 w-auto" />
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-[#92f1fe]">Admin portal</p>
+      <div className="border-b border-white/15 px-4 py-3.5">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 shrink-0 items-center rounded-md bg-white px-2 shadow-sm">
+            <img src="/logo.webp" alt="Balaji Medical Store" className="h-6 w-auto object-contain" />
+          </div>
+          <span className="whitespace-nowrap rounded bg-white/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#92f1fe]">
+            Admin Portal
+          </span>
         </div>
       </div>
 
