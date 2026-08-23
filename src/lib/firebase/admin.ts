@@ -1,11 +1,6 @@
 // ─── Firebase Admin SDK (server-side) ────────────────────────────
 // Used in API routes / server components for privileged operations.
 // Falls back to a no-op when credentials are missing.
-//
-// IMPORTANT: this file imports `firebase-admin/*` which is a Node-only
-// package. It must NEVER be imported from a client component. To check
-// admin-SKU availability from the client, use the dedicated lightweight
-// helper in `src/lib/firebase/admin-status.ts`.
 
 import { isFirebaseConfigured } from './config';
 
