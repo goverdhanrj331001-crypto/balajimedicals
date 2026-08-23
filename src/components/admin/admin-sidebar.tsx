@@ -6,16 +6,19 @@ import { Icon } from '@/components/ui/icon';
 
 const navGroups = [
   {
-    label: 'Overview',
+    label: 'Overview & Orders',
     items: [
       { label: 'Dashboard', icon: 'dashboard', href: '/admin/dashboard' },
       { label: 'Analytics & Reports', icon: 'analytics', href: '/admin/reports' },
+      { label: 'Orders', icon: 'receipt_long', href: '/admin/orders' },
+      { label: 'Medicine Orders', icon: 'medication', href: '/admin/medicine-orders' },
+      { label: 'Lab Testing Orders', icon: 'science', href: '/admin/lab-orders' },
+      { label: 'Products', icon: 'inventory_2', href: '/admin/products' },
     ],
   },
   {
     label: 'Catalog',
     items: [
-      { label: 'Products', icon: 'inventory_2', href: '/admin/products' },
       { label: 'Categories', icon: 'category', href: '/admin/categories' },
       { label: 'Brands', icon: 'storefront', href: '/admin/brands' },
       { label: 'Health Concerns', icon: 'health_and_safety', href: '/admin/health-concerns' },
@@ -26,11 +29,8 @@ const navGroups = [
     ],
   },
   {
-    label: 'Management',
+    label: 'Operations',
     items: [
-      { label: 'Orders', icon: 'receipt_long', href: '/admin/orders' },
-      { label: 'Medicine Orders', icon: 'medication', href: '/admin/medicine-orders' },
-      { label: 'Lab Testing Orders', icon: 'science', href: '/admin/lab-orders' },
       { label: 'Transactions', icon: 'payments', href: '/admin/transactions' },
       { label: 'Support Tickets', icon: 'support_agent', href: '/admin/support' },
       { label: 'Reviews', icon: 'reviews', href: '/admin/reviews' },
