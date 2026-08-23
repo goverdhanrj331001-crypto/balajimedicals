@@ -8,15 +8,32 @@ const POLLING_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes interval as requested
 const STORAGE_KEY = 'admin_order_sound_enabled';
 
 /**
- * Plays a clean, crisp chime sound using the browser Web Audio API
+ * Plays the custom audio file (/sounds/order-ring.mp3) if present,
+ * or falls back to a clean browser Web Audio chime.
  */
 export function playOrderRingSound() {
+  try {
+    const audio = new Audio('/sounds/order-ring.mp3');
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Fallback to synthesized audio if MP3 file is not found or blocked
+        playSynthesizedChime();
+      });
+    }
+  } catch {
+    playSynthesizedChime();
+  }
+}
+
+function playSynthesizedChime() {
   try {
     const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
 
-    // 3-note ascending melody chime (pleasant alert ring)
+    // 4-note ascending melody chime (pleasant alert ring)
     const notes = [
       { freq: 523.25, start: 0, duration: 0.2 },     // C5
       { freq: 659.25, start: 0.18, duration: 0.22 },  // E5
