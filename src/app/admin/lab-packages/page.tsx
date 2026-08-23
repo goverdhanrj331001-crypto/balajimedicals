@@ -30,14 +30,13 @@ const columns: Column<LabPackage>[] = [
     render: (p) => {
       const mode = p.collectionType || 'both';
       return (
-        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-          mode === 'home'
+        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${mode === 'home'
             ? 'bg-[#dcfce7] text-[#15803d]'
             : mode === 'lab'
-            ? 'bg-[#e0e7ff] text-[#4338ca]'
-            : 'bg-[#d9eeee] text-[#006872]'
-        }`}>
-          {mode === 'home' ? '🏠 Home Only' : mode === 'lab' ? '🏥 Lab Visit Only' : '✨ Home & Lab Both'}
+              ? 'bg-[#e0e7ff] text-[#4338ca]'
+              : 'bg-[#d9eeee] text-[#006872]'
+          }`}>
+          {mode === 'home' ? '🏠 Home Only' : mode === 'lab' ? '🏥 Lab Visit Only' : ' Home & Lab Both'}
         </span>
       );
     },

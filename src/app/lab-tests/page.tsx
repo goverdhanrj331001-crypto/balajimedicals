@@ -171,14 +171,13 @@ export default function LabTestsPage() {
                     <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                       <div>
                         <div className="flex items-center justify-between gap-1 mb-1">
-                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                            (p.collectionType || 'both') === 'home'
+                          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${(p.collectionType || 'both') === 'home'
                               ? 'bg-[#dcfce7] text-[#15803d]'
                               : (p.collectionType || 'both') === 'lab'
-                              ? 'bg-[#e0e7ff] text-[#4338ca]'
-                              : 'bg-[#f0fdfa] text-[#006872]'
-                          }`}>
-                            {(p.collectionType || 'both') === 'home' ? '🏠 Home Collection' : (p.collectionType || 'both') === 'lab' ? '🏥 Lab Visit Only' : '✨ Home & Lab'}
+                                ? 'bg-[#e0e7ff] text-[#4338ca]'
+                                : 'bg-[#f0fdfa] text-[#006872]'
+                            }`}>
+                            {(p.collectionType || 'both') === 'home' ? '🏠 Home Collection' : (p.collectionType || 'both') === 'lab' ? '🏥 Lab Visit Only' : ' Home & Lab'}
                           </span>
                         </div>
                         <h3 className="text-[15px] font-bold text-[#0f172a] line-clamp-1 group-hover:text-[#006872] transition-colors">
@@ -231,14 +230,13 @@ export default function LabTestsPage() {
                   <div>
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <h4 className="text-[13.5px] font-bold text-[#0f172a]">{t.name}</h4>
-                      <span className={`inline-block rounded px-1.5 py-0.2 text-[9.5px] font-bold ${
-                        (t.collectionType || 'both') === 'home'
+                      <span className={`inline-block rounded px-1.5 py-0.2 text-[9.5px] font-bold ${(t.collectionType || 'both') === 'home'
                           ? 'bg-[#dcfce7] text-[#15803d]'
                           : (t.collectionType || 'both') === 'lab'
-                          ? 'bg-[#e0e7ff] text-[#4338ca]'
-                          : 'bg-[#f0fdfa] text-[#006872]'
-                      }`}>
-                        {(t.collectionType || 'both') === 'home' ? '🏠 Home' : (t.collectionType || 'both') === 'lab' ? '🏥 Lab' : '✨ Both'}
+                            ? 'bg-[#e0e7ff] text-[#4338ca]'
+                            : 'bg-[#f0fdfa] text-[#006872]'
+                        }`}>
+                        {(t.collectionType || 'both') === 'home' ? '🏠 Home' : (t.collectionType || 'both') === 'lab' ? '🏥 Lab' : ' Both'}
                       </span>
                     </div>
                     <p className="text-[11px] text-[#64748b]">{(t as any).sampleType || 'Blood Sample'} • Report in 24 hrs</p>

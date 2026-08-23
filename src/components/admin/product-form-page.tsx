@@ -343,9 +343,8 @@ export function ProductFormPage({ initial }: ProductFormPageProps) {
                 key={t.id}
                 type="button"
                 onClick={() => setTab(t.id)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition ${
-                  tab === t.id ? 'bg-[#006872] text-white' : 'text-[#3e494a] hover:bg-[#f0eded]'
-                }`}
+                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition ${tab === t.id ? 'bg-[#006872] text-white' : 'text-[#3e494a] hover:bg-[#f0eded]'
+                  }`}
               >
                 <Icon name={t.icon} className="text-[16px]" />
                 {t.label}
@@ -445,7 +444,7 @@ export function ProductFormPage({ initial }: ProductFormPageProps) {
                 </div>
               </Field>
 
-              <Field label="Selling Price ($)" error={errors.price}>
+              <Field label="Selling Price (₹)" error={errors.price}>
                 <TextInput
                   type="number"
                   value={form.price ?? 0}
@@ -454,7 +453,7 @@ export function ProductFormPage({ initial }: ProductFormPageProps) {
                 />
               </Field>
 
-              <Field label="MRP / Old Price ($)" hint="Optional — shows strikethrough">
+              <Field label="MRP / Old Price (₹)" hint="Optional — shows strikethrough">
                 <TextInput
                   type="number"
                   value={form.oldPrice ?? 0}
@@ -731,7 +730,7 @@ export function ProductFormPage({ initial }: ProductFormPageProps) {
                           placeholder="14.99"
                         />
                       </Field>
-                      <Field label="Selling Price ($)">
+                      <Field label="Selling Price (₹)">
                         <TextInput
                           type="number"
                           value={v.sellingPrice}
