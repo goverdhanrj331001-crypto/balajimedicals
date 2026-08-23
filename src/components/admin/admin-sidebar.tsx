@@ -40,7 +40,6 @@ const navGroups = [
     label: 'People',
     items: [
       { label: 'Users', icon: 'group', href: '/admin/users' },
-      { label: 'Employees', icon: 'badge', href: '/admin/employees' },
     ],
   },
 ];
