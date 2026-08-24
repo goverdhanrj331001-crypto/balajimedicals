@@ -211,7 +211,7 @@ function ScheduleLabTestPageInner() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Booking failed');
       toast.success('Lab test booked successfully!');
-      router.push('/orders');
+      router.push('/orders?tab=lab');
     } catch (e: any) {
       toast.error(e.message ?? 'Booking failed');
     } finally {

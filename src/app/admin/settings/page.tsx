@@ -63,15 +63,6 @@ export default function AdminSettingsPage() {
               <Field label="Tagline">
                 <TextInput value={settings.tagline ?? ''} onChange={(e) => setSettings({ ...settings, tagline: e.target.value })} />
               </Field>
-              <Field label="Hero Badge Text">
-                <TextInput value={settings.heroBadgeText ?? ''} onChange={(e) => setSettings({ ...settings, heroBadgeText: e.target.value })} />
-              </Field>
-              <Field label="Hero Title">
-                <TextInput value={settings.heroTitle ?? ''} onChange={(e) => setSettings({ ...settings, heroTitle: e.target.value })} />
-              </Field>
-              <Field label="Hero Subtitle" wide>
-                <TextInput value={settings.heroSubtitle ?? ''} onChange={(e) => setSettings({ ...settings, heroSubtitle: e.target.value })} />
-              </Field>
             </div>
           </SectionCard>
 
@@ -94,7 +85,8 @@ export default function AdminSettingsPage() {
               <Field label="Currency Symbol">
                 <TextInput value={settings.currencySymbol ?? ''} onChange={(e) => setSettings({ ...settings, currencySymbol: e.target.value })} />
               </Field>
-              <Field label="Free Shipping Threshold ($)">
+              <Field label="Free Shipping Threshold (₹)
+">
                 <TextInput type="number" value={settings.freeShippingThreshold ?? 0} onChange={(e) => setSettings({ ...settings, freeShippingThreshold: Number(e.target.value) })} />
               </Field>
               <Field label="Prescription Discount (%)">

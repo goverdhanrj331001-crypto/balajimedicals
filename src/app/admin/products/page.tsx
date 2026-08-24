@@ -17,6 +17,8 @@ export default function AdminProductsPage() {
   const [search, setSearch] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 20;
 
   const filtered = useMemo(() => {
     if (!search.trim()) return items;
@@ -29,6 +31,13 @@ export default function AdminProductsPage() {
         p.sku?.toLowerCase().includes(q),
     );
   }, [items, search]);
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // Reset to page 1 on search change
+  useEffect(() => { setCurrentPage(1); }, [search]);
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
@@ -82,39 +91,6 @@ export default function AdminProductsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {/* Sample Download */}
-          <button
-            type="button"
-            onClick={downloadSample}
-            className="flex items-center gap-2 rounded-lg border border-[#bdc9ca] bg-white px-4 py-2.5 text-[12px] font-bold text-[#3e494a] hover:bg-[#f5f3f3]"
-          >
-            <Icon name="download" className="text-[18px]" /> Sample Excel
-          </button>
-          {/* Import */}
-          <input
-            ref={fileImportRef}
-            type="file"
-            accept=".xlsx,.xls,.csv"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleImport(f);
-              e.target.value = '';
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => fileImportRef.current?.click()}
-            disabled={importing}
-            className="flex items-center gap-2 rounded-lg border border-[#bdc9ca] bg-white px-4 py-2.5 text-[12px] font-bold text-[#006872] hover:bg-[#d9eeee] disabled:opacity-60"
-          >
-            {importing ? (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#006872]/30 border-t-[#006872]" />
-            ) : (
-              <Icon name="upload" className="text-[18px]" />
-            )}
-            Import Excel
-          </button>
           {/* Add New */}
           <Link
             href="/admin/products/new"
@@ -151,14 +127,16 @@ export default function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 && (
+                {loading ? (
+                  <tr><td colSpan={7} className="px-3 py-8 text-center text-[12px] text-[#6e797b]">Loading…</td></tr>
+                ) : paginated.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-3 py-8 text-center text-[12px] text-[#6e797b]">
-                      No products found. Click "Add New Product" to create one.
+                      No products found. Click “Add New Product” to create one.
                     </td>
                   </tr>
-                )}
-                {filtered.map((p) => {
+                ) : null}
+                {paginated.map((p) => {
                   const stockStatus = p.stock === 0 ? 'Out of Stock' : p.stock <= p.reorderLevel ? 'Low Stock' : 'In Stock';
                   return (
                     <tr key={p.id} className="border-b border-[#f0eded] transition hover:bg-[#fbf9f8]">
@@ -218,7 +196,56 @@ export default function AdminProductsPage() {
           </div>
         )}
         <div className="mt-4 flex items-center justify-between text-[11px] text-[#6e797b]">
-          <span>Showing {filtered.length} of {items.length} products</span>
+          <span>Showing {Math.min((currentPage - 1) * PAGE_SIZE + 1, filtered.length)}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} of {filtered.length} products</span>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-1 rounded-lg border border-[#bdc9ca] bg-white px-3 py-1.5 text-[11px] font-bold text-[#3e494a] hover:bg-[#f5f3f3] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                <Icon name="chevron_left" className="text-[15px]" /> Prev
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                .reduce<(number | 'dots')[]>((acc, p, idx, arr) => {
+                  if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('dots');
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((item, idx) =>
+                  item === 'dots' ? (
+                    <span key={`dots-${idx}`} className="px-0.5 text-[#94a3b8] text-[11px]">…</span>
+                  ) : (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setCurrentPage(item as number)}
+                      className={`h-7 w-7 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                        currentPage === item
+                          ? 'bg-[#006872] text-white'
+                          : 'border border-[#bdc9ca] bg-white text-[#3e494a] hover:bg-[#f5f3f3]'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  )
+                )}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-1 rounded-lg border border-[#bdc9ca] bg-white px-3 py-1.5 text-[11px] font-bold text-[#3e494a] hover:bg-[#f5f3f3] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                Next <Icon name="chevron_right" className="text-[15px]" />
+              </button>
+            </div>
+          )}
         </div>
       </SectionCard>
 

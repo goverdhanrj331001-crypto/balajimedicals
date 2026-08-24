@@ -277,8 +277,8 @@ export function OrdersAdminPage({ typeFilter = 'all', title = 'Orders Overview',
               />
             </div>
 
-            {/* Lab Test Report Upload Section */}
-            {(editing.type === 'lab' || newStatus === 'Completed' || newStatus === 'Delivered') && (
+            {/* Lab Test Report Upload Section - Only for lab type orders */}
+            {editing.type === 'lab' && (
               <div className="rounded-xl border border-[#cbd5e1] bg-[#f8fafc] p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>

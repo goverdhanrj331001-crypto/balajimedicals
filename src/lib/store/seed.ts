@@ -581,7 +581,7 @@ export const seedData = {
 
   // ─── Site settings (admin controlled) ─────────────────────────
   settings: [
-    { id: 'site', siteName: 'Balaji Medical Store', tagline: 'Everyday wellness', supportPhone: '+91 95210-00000', supportEmail: 'support@balajimedical.com', currency: 'INR', currencySymbol: '₹', freeShippingThreshold: 499, prescriptionDiscountPct: 25, heroBadgeText: 'Everyday wellness', heroTitle: 'Boost your immunity', heroSubtitle: 'Health essentials for brighter days.', maintenanceMode: false, labTestServiceStart: '09:00', labTestServiceEnd: '21:00', labTestMaxBookingsPerDay: 1, razorpayKeyId: '', razorpayKeySecret: '', razorpayEnabled: false, codEnabled: true, upiEnabled: false, cardEnabled: false },
+    { id: 'site', siteName: 'Balaji Medical Store', tagline: 'Everyday wellness', supportPhone: '9521045443', supportEmail: 'support@balajimedical.com', currency: 'INR', currencySymbol: '₹', freeShippingThreshold: 499, prescriptionDiscountPct: 25, heroBadgeText: 'Everyday wellness', heroTitle: 'Boost your immunity', heroSubtitle: 'Health essentials for brighter days.', maintenanceMode: false, labTestServiceStart: '09:00', labTestServiceEnd: '21:00', labTestMaxBookingsPerDay: 1, razorpayKeyId: '', razorpayKeySecret: '', razorpayEnabled: false, codEnabled: true, upiEnabled: false, cardEnabled: false },
   ],
 
   // ─── Auth users (for mock auth only) ──────────────────────────

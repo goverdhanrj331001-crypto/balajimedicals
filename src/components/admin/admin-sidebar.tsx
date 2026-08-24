@@ -55,7 +55,7 @@ export function AdminSidebar() {
             <img src="/logo.webp" alt="Balaji Medical Store" className="h-6 w-auto object-contain" />
           </div>
           <span className="whitespace-nowrap rounded bg-white/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#92f1fe]">
-            Admin Portal
+
           </span>
         </div>
       </div>
@@ -73,11 +73,10 @@ export function AdminSidebar() {
                   <Link
                     key={href}
                     href={href}
-                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] transition ${
-                      isActive
-                        ? 'bg-white font-bold text-[#006872]'
-                        : 'text-white/85 hover:bg-white/10 hover:text-white'
-                    }`}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] transition ${isActive
+                      ? 'bg-white font-bold text-[#006872]'
+                      : 'text-white/85 hover:bg-white/10 hover:text-white'
+                      }`}
                   >
                     <Icon name={icon} className="text-[19px]" />
                     <span>{label}</span>

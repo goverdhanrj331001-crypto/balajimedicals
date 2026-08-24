@@ -148,47 +148,37 @@ export default function HomePage() {
           <LabCarousel packages={data.labPackages ?? []} />
 
           {/* Daily essentials banner — real image */}
-          {essentials && essentials.imageUrl && (
-            <section className="px-3 md:px-8 py-4">
-              <Link href={essentials.ctaHref ?? '/products'} className="block overflow-hidden rounded-xl">
+          {essentials && (
+            <section className="px-3 md:px-8 py-3">
+              <Link href={essentials.ctaHref ?? '/products'} className="block overflow-hidden rounded-2xl shadow-xs border border-[#e2e8f0]">
                 <img
-                  src={essentials.imageUrl}
+                  src={essentials.imageUrl ? essentials.imageUrl.replace(/&#x2F;/g, '/') : '/banner-essentials.png'}
                   alt="Health Essentials"
-                  className="h-32 w-full object-cover md:h-48"
+                  className="h-32 sm:h-36 w-full object-cover md:h-48"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/banner-essentials.png';
+                  }}
                 />
               </Link>
-            </section>
-          )}
-          {essentials && !essentials.imageUrl && (
-            <section className="px-3 md:px-8 py-4">
-              <div className="relative flex h-32 items-center overflow-hidden rounded-xl bg-[#4caf50] px-4 md:px-6 text-white md:h-48">
-                <div className="relative z-10">
-                  <p className="text-[11px] uppercase tracking-wider">{essentials.subtitle ?? 'Daily health'}</p>
-                  <h3 className="text-[24px] font-bold leading-8">{essentials.title}</h3>
-                  {essentials.note && <p className="text-[14px]">{essentials.note}</p>}
-                  <Link href={essentials.ctaHref ?? '/products'} className="mt-2 flex items-center gap-2 text-[12px] font-bold">
-                    {essentials.ctaText ?? 'SHOP NOW'}
-                    <Icon name="arrow_forward" className="rounded-full bg-white p-1 text-[16px] text-[#4caf50]" />
-                  </Link>
-                </div>
-                <Icon name="medication" className="absolute right-12 text-[100px] text-white/25" />
-              </div>
             </section>
           )}
 
           {/* Call banner */}
           {call && (
-            <section className="border-y border-[#bdc9ca]/30 bg-white px-3 md:px-8 py-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-[18px] font-semibold">{call.title}</h2>
-                  <p className="text-[14px] text-[#3e494a]">{call.subtitle}</p>
+            <section className="border-y border-[#e2e8f0] bg-white px-3.5 md:px-8 py-3.5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-[16px] sm:text-[17px] font-bold text-[#0f172a]">{call.title || 'Call to order medicines'}</h2>
+                  <p className="text-[12px] sm:text-[12.5px] text-[#64748b]">
+                    {call.subtitle || 'Need medicine without any hassle?'} <span className="font-bold text-[#006872]">· 9521045443</span>
+                  </p>
                 </div>
                 <a
-                  href={`tel:${data.settings?.supportPhone ?? ''}`}
-                  className="rounded bg-[#006872] px-4 py-2 text-[12px] font-bold text-white"
+                  href={`tel:${data.settings?.supportPhone ? data.settings.supportPhone.replace(/[^0-9+]/g, '') : '9521045443'}`}
+                  className="shrink-0 whitespace-nowrap rounded-lg bg-[#006872] px-3.5 py-1.5 text-[12px] font-bold text-white shadow-2xs hover:bg-[#00535b] transition active:scale-95 flex items-center gap-1.5"
                 >
-                  {call.ctaText ?? 'Call Now'}
+                  <Icon name="call" className="text-[15px]" />
+                  <span>{call.ctaText ?? 'Call Now'}</span>
                 </a>
               </div>
             </section>

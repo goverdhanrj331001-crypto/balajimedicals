@@ -25,6 +25,8 @@ const sortOptions = [
   { value: 'name', label: 'Name: A to Z' },
 ];
 
+const PAGE_SIZE = 30;
+
 function ProductsPageInner() {
   const params = useSearchParams();
   const [data, setData] = useState<Catalog | null>(null);
@@ -34,6 +36,7 @@ function ProductsPageInner() {
   const [selectedBrand, setSelectedBrand] = useState(() => params.get('brand') ?? 'all');
   const [sort, setSort] = useState<'default' | 'price-asc' | 'price-desc' | 'name'>('default');
   const [sortOpen, setSortOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const sortRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -61,13 +64,13 @@ function ProductsPageInner() {
     const cat = params.get('category');
     const brand = params.get('brand');
     if (q !== null && q !== search) {
-      Promise.resolve().then(() => setSearch(q));
+      Promise.resolve().then(() => { setSearch(q); setCurrentPage(1); });
     }
     if (cat !== null && cat !== selectedCat) {
-      Promise.resolve().then(() => setSelectedCat(cat));
+      Promise.resolve().then(() => { setSelectedCat(cat); setCurrentPage(1); });
     }
     if (brand !== null && brand !== selectedBrand) {
-      Promise.resolve().then(() => setSelectedBrand(brand));
+      Promise.resolve().then(() => { setSelectedBrand(brand); setCurrentPage(1); });
     }
   }, [params, search, selectedCat, selectedBrand]);
 
@@ -91,6 +94,13 @@ function ProductsPageInner() {
     if (sort === 'name') list = [...list].sort((a, b) => a.shortName.localeCompare(b.shortName));
     return list;
   }, [data, selectedCat, selectedBrand, search, sort]);
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // Reset to page 1 when filters change
+  useEffect(() => { setCurrentPage(1); }, [search, selectedCat, selectedBrand, sort]);
 
   // Find banner specifically configured for products page (or fallback to hero banner)
   const productsBanner = data?.banners?.find((b) => b.slot === 'products') ?? data?.banners?.find((b) => b.slot === 'hero');
@@ -151,6 +161,9 @@ function ProductsPageInner() {
           <h1 className="text-[24px] font-bold tracking-tight text-[#0f172a]">All Products</h1>
           <p className="text-[12.5px] text-[#64748b]">
             {loading ? 'Loading products…' : `${filtered.length} items found`}
+            {!loading && filtered.length > 0 && (
+              <span className="ml-2 text-[#006872] font-semibold">· Page {currentPage} of {totalPages}</span>
+            )}
           </p>
         </div>
 
@@ -277,11 +290,66 @@ function ProductsPageInner() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
-            {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
+              {paginated.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+
+            {/* ─── Pagination Controls ─── */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setCurrentPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white px-4 py-2 text-[12.5px] font-bold text-[#334155] shadow-2xs transition hover:border-[#006872] hover:text-[#006872] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  <Icon name="chevron_left" className="text-[18px]" />
+                  Prev
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+                    .reduce<(number | 'dots')[]>((acc, p, idx, arr) => {
+                      if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('dots');
+                      acc.push(p);
+                      return acc;
+                    }, [])
+                    .map((item, idx) =>
+                      item === 'dots' ? (
+                        <span key={`dots-${idx}`} className="px-1 text-[#94a3b8] text-[13px]">…</span>
+                      ) : (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => { setCurrentPage(item as number); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                          className={`h-9 w-9 rounded-xl text-[13px] font-bold transition cursor-pointer ${
+                            currentPage === item
+                              ? 'bg-[#006872] text-white shadow-xs'
+                              : 'bg-white border border-[#e2e8f0] text-[#334155] hover:border-[#006872] hover:text-[#006872]'
+                          }`}
+                        >
+                          {item}
+                        </button>
+                      )
+                    )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => { setCurrentPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white px-4 py-2 text-[12.5px] font-bold text-[#334155] shadow-2xs transition hover:border-[#006872] hover:text-[#006872] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  Next
+                  <Icon name="chevron_right" className="text-[18px]" />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { DesktopHeader } from '@/components/layout/desktop-header';
 import { StoreHeader } from '@/components/layout/store-header';
@@ -11,11 +12,32 @@ import { useAuth } from '@/lib/auth/auth-context';
 import type { Order } from '@/types';
 
 export default function OrdersPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-64 items-center justify-center">
+        <span className="h-8 w-8 animate-spin rounded-full border-2 border-[#006872]/30 border-t-[#006872]" />
+      </div>
+    }>
+      <OrdersPageInner />
+    </Suspense>
+  );
+}
+
+function OrdersPageInner() {
+  const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'medicine' | 'lab'>('all');
   const userId = user?.uid;
+
+  // Read ?tab= from URL and set active tab
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'lab' || tab === 'medicine' || tab === 'all') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (authLoading) return;

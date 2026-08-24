@@ -41,12 +41,12 @@ export function LabCarousel({
   return (
     <section className="w-full bg-white px-4 md:px-8 py-5">
       <div className="mx-auto max-w-7xl">
-        {/* ─── Header: Exact same style as ProductCarousel ─── */}
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-[20px] font-bold text-[#1e293b]">{title}</h2>
+        {/* ─── Header: Exact same style as ProductCarousel & other sections ─── */}
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <h2 className="text-[17px] sm:text-[18px] md:text-[20px] font-bold text-[#1e293b] leading-tight">{title}</h2>
           <Link
             href={viewAllHref}
-            className="rounded-lg bg-[#006872] px-3.5 py-1.5 text-[12px] font-bold text-white transition hover:bg-[#00535b] shadow-2xs cursor-pointer active:scale-95"
+            className="shrink-0 whitespace-nowrap rounded-lg bg-[#006872] px-3.5 py-1 text-[12px] font-bold text-white shadow-2xs hover:bg-[#00535b] transition active:scale-95"
           >
             VIEW ALL
           </Link>
