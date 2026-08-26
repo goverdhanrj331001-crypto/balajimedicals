@@ -104,9 +104,7 @@ export function LabCarousel({
 
                   {/* Middle Row: Lab Logo/Name */}
                   <div className="my-3 flex items-center gap-1.5 border-t border-[#f1f5f9] pt-2.5">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[#e0f2f1] text-[#006872]">
-                      <Icon name="science" className="text-[13px]" />
-                    </div>
+                    <img src="/icon/ui_revamp_labtest.svg" alt="" className="h-5 w-5 shrink-0" />
                     <span className="truncate text-[11.5px] font-semibold text-[#475569]">
                       Balaji Labs
                     </span>
