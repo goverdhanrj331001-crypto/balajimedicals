@@ -125,7 +125,7 @@ export function DesktopHeader({ categories: initialCategories = [] }: DesktopHea
               href="/lab-tests"
               className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#006872] to-[#00838f] px-4 py-2 text-[13px] font-bold text-white shadow-xs transition-all hover:shadow-md hover:from-[#00535b] hover:to-[#006872] active:scale-98"
             >
-              <Icon name="science" className="text-[19px] text-[#a7f3d0]" />
+              <img src="/icon/ui_revamp_labtest.svg" alt="Lab Test" className="h-5 w-5" />
               <span>Book Lab Test</span>
             </Link>
 
