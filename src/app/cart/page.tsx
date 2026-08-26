@@ -81,7 +81,7 @@ export default function CartPage() {
                 href="/lab-tests"
                 className="inline-flex items-center gap-2 rounded-xl border border-[#006872] bg-white px-5 py-2.5 text-[13px] font-bold text-[#006872] shadow-xs transition hover:bg-[#f0fdfa] active:scale-95"
               >
-                <Icon name="science" className="text-[18px]" />
+                <img src="/icon/ui_revamp_labtest.svg" alt="Lab Test" className="h-[18px] w-[18px]" />
                 <span>Book Lab Tests</span>
               </Link>
             </div>
